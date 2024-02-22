@@ -24,10 +24,14 @@ namespace Database{
                 if(_realmApp.CurrentUser == null){
                     _realmUser = await _realmApp.LogInAsync(Credentials.Anonymous());
                     _realm = await Realm.GetInstanceAsync(new FlexibleSyncConfiguration(_realmUser));
+                    var query = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id);
+                    await query.SubscribeAsync();
                 }
                 else{
                     _realmUser = _realmApp.CurrentUser;
                     _realm = Realm.GetInstance(new FlexibleSyncConfiguration(_realmUser));
+                    var query = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id);
+                    await query.SubscribeAsync();
                 }
             }
         }
@@ -43,8 +47,8 @@ namespace Database{
         }
 
         private GameDataModel GetOrCreateGameData(){
-            GameDataModel gameDataModel = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id).FirstOrDefault();
-            
+            var gameDataModel = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id).FirstOrDefault();
+
             if(gameDataModel == null){
                 _realm.Write(() => {
                     gameDataModel = _realm.Add(new GameDataModel(){
