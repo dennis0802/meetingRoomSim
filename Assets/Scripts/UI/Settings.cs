@@ -23,7 +23,7 @@ namespace UI{
             isMuted = PlayerPrefs.GetInt("IsMuted") == 1;
             isFullScreen = PlayerPrefs.GetInt("IsFullScreen") == 1;
             muteDesc.text = isMuted ? "Muted" : "Unmuted";
-            //SetResolutionText();
+            SetResolutionText();
 
             AudioListener.pause = isMuted;
             if(!PlayerPrefs.HasKey("Volume")){
@@ -47,7 +47,7 @@ namespace UI{
             muteDesc.text = isMuted ? "Muted" : "Unmuted";
         }
 
-        /// <sumamry>
+        /// <summary>
         /// Change the volume of the game
         /// </summary>
         public void ChangeVolume(){
@@ -81,7 +81,7 @@ namespace UI{
             windowText.text = isFullScreen ? "Toggle: Full-screen" : "Toggle: Windowed";
         }        
 
-        /// <sumamry>
+        /// <summary>
         /// Change the resolution of the window (size)
         /// </summary>
         public void ChangeResolution(int flag){
@@ -109,9 +109,9 @@ namespace UI{
             SetResolutionText();
         }
 
-        /// <sumamry>
+        /// <summary>
         /// Change the text of the selected resolution
-        /// </sumamry>
+        /// </summary>
         private void SetResolutionText(){
             Vector3 pos = resText.GetComponent<RectTransform>().localPosition;
 

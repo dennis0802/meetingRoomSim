@@ -13,7 +13,7 @@ namespace UI{
         private GameObject cameraObj;
 
         private Animation anim;
-        // 0 = main, 1 = mode selection, 2 = about, 3 = scores/settings
+        // 0 = main, 1 = mode selection, 2 = about, 3 = scores/settings, 4 = credits
         private int menuIndex = 0;
 
         void Start(){
@@ -50,6 +50,14 @@ namespace UI{
         public void Scores(){
             anim.Play("camera_to_scores_settings");
             menuIndex = 3;
+        }
+
+        /// <summary>
+        /// Open credits menu
+        /// </summary>
+        public void Credits(){
+            anim.Play("camera_to_about");
+            menuIndex = 2;
         }
 
         /// <summary>
