@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI{
+    [DisallowMultipleComponent]
     public class MenuController : MonoBehaviour {
 
         /// <summary>

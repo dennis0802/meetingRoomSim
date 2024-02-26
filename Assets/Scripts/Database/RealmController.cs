@@ -7,6 +7,7 @@ using System.Linq;
 using Database;
 
 namespace Database{
+    [DisallowMultipleComponent]
     public class RealmController : MonoBehaviour {
         static public RealmController Instance;
 

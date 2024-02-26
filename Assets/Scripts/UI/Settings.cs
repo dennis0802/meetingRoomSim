@@ -6,6 +6,7 @@ using TMPro;
 using UI;
 
 namespace UI{
+    [DisallowMultipleComponent]
     public class Settings : MonoBehaviour {
 
         [Tooltip("Text object for descriptions")]
