@@ -19,12 +19,12 @@ namespace PlayerControl{
         [SerializeField]
         private GameObject pauseMenuUI;
 
-        [Tooltip("UI for settings menu")]
+        [Tooltip("UI for main game")]
         [SerializeField]
-        private GameObject settingsUI;
+        private GameObject mainGameUI;
 
         // To track if the game is paused.
-        public static bool IsPaused = false, PauseDisabled = false;
+        public static bool IsPaused;
         private InputAction pauseAction;
 
         void Start(){
@@ -48,8 +48,10 @@ namespace PlayerControl{
         public void Resume(){
             buttonClick.Play();
             pauseMenuUI.SetActive(false);
+            mainGameUI.SetActive(true);
             Time.timeScale = 1.0f;
             IsPaused = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         /// <summary>
@@ -58,8 +60,10 @@ namespace PlayerControl{
         public void Pause(){
             buttonClick.Play();
             pauseMenuUI.SetActive(true);
+            mainGameUI.SetActive(false);
             Time.timeScale = 0.0f;
             IsPaused = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         /// <summary>
@@ -70,14 +74,6 @@ namespace PlayerControl{
             pauseMenuUI.SetActive(false);
             Time.timeScale = 1.0f;
             SceneManager.LoadScene(0);
-        }
-
-        /// <sumamry>
-        /// Load settings
-        /// </sumamry>
-        public void LoadSettings(){
-            pauseMenuUI.SetActive(false);
-            settingsUI.SetActive(true);
         }
 
         /// <summary>

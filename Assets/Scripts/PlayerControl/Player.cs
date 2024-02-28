@@ -6,10 +6,6 @@ using UnityEngine.InputSystem;
 namespace PlayerControl{
     [DisallowMultipleComponent]
     public class Player : MonoBehaviour {
-        [Tooltip("Player input object")]
-        [SerializeField]
-        private PlayerInput playerInput;
-
         /// <summary>
         /// Player input actions
         /// </summary> 
@@ -33,22 +29,35 @@ namespace PlayerControl{
         /// <summary>
         /// Values for player movement physics
         /// </summary>  
-        private float gravity = -9.81f, rotationSpeed = 5f;
+        private float gravity = -9.81f, rotationSpeed = 5f, jumpHeight = 2f;
 
         /// <summary>
         /// Player current velocity
         /// </summary> 
         private Vector3 playerVelocity;
+
+        /// <summary>
+        /// Player jump sound
+        /// </summary> 
+        [SerializeField]
+        private AudioSource jumpSound;
         
         /// <summary>
         /// Player speed
         /// </summary>  
         public float playerSpeed = 3.0f;
 
+        /// <summary>
+        /// Player input object
+        /// </summary> 
+        private PlayerInput playerInput;
+
         // Start is called before the first frame update
         private void Start()
         {
-            playerInteract = playerInput.actions["LeftClick"];
+            Cursor.lockState = CursorLockMode.Locked;
+            playerInput = GetComponent<PlayerInput>();
+            playerInteract = playerInput.actions["Interact"];
             playerMove = playerInput.actions["Move"];
             playerJump = playerInput.actions["Jump"];
             startRun = playerInput.actions["RunStart"];
@@ -89,6 +98,12 @@ namespace PlayerControl{
             // Player interaction
             if(playerInteract.triggered){
                 Debug.Log("Player wants to interact");
+            }
+
+            // Jumping
+            else if(playerJump.triggered && isGrounded){
+                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+                jumpSound.Play();
             }
         }
 
