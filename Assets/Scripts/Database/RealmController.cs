@@ -22,12 +22,14 @@ namespace Database{
             Instance = this;
             if(_realm == null){
                 _realmApp = App.Create(new AppConfiguration(_realmAppId));
+                // Still need to login
                 if(_realmApp.CurrentUser == null){
                     _realmUser = await _realmApp.LogInAsync(Credentials.Anonymous());
                     _realm = await Realm.GetInstanceAsync(new FlexibleSyncConfiguration(_realmUser));
                     var query = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id);
                     await query.SubscribeAsync();
                 }
+                // Already logged in
                 else{
                     _realmUser = _realmApp.CurrentUser;
                     _realm = Realm.GetInstance(new FlexibleSyncConfiguration(_realmUser));
@@ -47,6 +49,9 @@ namespace Database{
             return _realm != null;
         }
 
+        /// <summary>
+        /// Get or create game data
+        /// </summary>
         private GameDataModel GetOrCreateGameData(){
             var gameDataModel = _realm.All<GameDataModel>().Where(d => d.UserId == _realmUser.Id).FirstOrDefault();
 

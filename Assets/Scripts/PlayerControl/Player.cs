@@ -7,6 +7,13 @@ namespace PlayerControl{
     [DisallowMultipleComponent]
     public class Player : MonoBehaviour {
         /// <summary>
+        /// Player jump sound
+        /// </summary> 
+        [Tooltip("Sound to play when jumping")]
+        [SerializeField]
+        private AudioSource jumpSound;
+        
+        /// <summary>
         /// Player input actions
         /// </summary> 
         private InputAction playerMove, playerInteract, startRun, playerJump, endRun;
@@ -35,12 +42,6 @@ namespace PlayerControl{
         /// Player current velocity
         /// </summary> 
         private Vector3 playerVelocity;
-
-        /// <summary>
-        /// Player jump sound
-        /// </summary> 
-        [SerializeField]
-        private AudioSource jumpSound;
         
         /// <summary>
         /// Player speed
