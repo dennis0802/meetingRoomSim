@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
+using TMPro;
 
 namespace PlayerControl{
     [DisallowMultipleComponent]
@@ -12,6 +14,27 @@ namespace PlayerControl{
         [Tooltip("Sound to play when jumping")]
         [SerializeField]
         private AudioSource jumpSound;
+
+        /// <summary>
+        /// Player pointer object
+        /// </summary>
+        [Tooltip("Player pointer object")]
+        [SerializeField]
+        private Image playerPointer;
+
+        /// <summary>
+        /// Text object to store the name of the object being viewed
+        /// </summary>
+        [Tooltip("Text object to store the name of the object being viewed")]
+        [SerializeField]
+        private TextMeshProUGUI objectNameText;
+
+        /// <summary>
+        /// The object the player can interact with (ie. in line of sight)
+        /// </summary>
+        [Tooltip("The object the player can interact with (ie. in line of sight")]
+        [SerializeField]
+        private GameObject interactableObject;
         
         /// <summary>
         /// Player input actions
@@ -31,7 +54,7 @@ namespace PlayerControl{
         /// <summary>
         /// Flags for player actions
         /// </summary> 
-        private bool isGrounded, isRunning;
+        private bool isGrounded, isRunning, canInteract;
 
         /// <summary>
         /// Values for player movement physics
@@ -97,8 +120,8 @@ namespace PlayerControl{
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
             // Player interaction
-            if(playerInteract.triggered){
-                Debug.Log("Player wants to interact");
+            if(canInteract && playerInteract.triggered && !PauseMenu.IsPaused){
+                Debug.Log("Player wants to interact with " + interactableObject.name);
             }
 
             // Jumping
@@ -106,6 +129,15 @@ namespace PlayerControl{
                 playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
                 jumpSound.Play();
             }
+        }
+
+        void FixedUpdate(){
+            RaycastHit hit;
+            bool raycast = Physics.Raycast(cameraTransform.position, cameraTransform.TransformDirection(Vector3.forward), out hit, 3, 1<<8);
+            interactableObject = raycast ? hit.collider.gameObject : null;
+            objectNameText.text = raycast ? interactableObject.name : "";
+            canInteract = raycast;
+            playerPointer.color = raycast ? Color.green : Color.white;
         }
 
         /// <summary>

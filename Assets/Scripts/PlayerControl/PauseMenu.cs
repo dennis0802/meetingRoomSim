@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Levels;
 
 namespace PlayerControl{
     [DisallowMultipleComponent]
@@ -75,7 +76,7 @@ namespace PlayerControl{
         }
 
         void Update(){
-            if(SceneManager.GetActiveScene().buildIndex > 0 && pauseAction.triggered){
+            if(!(LevelManager.GameLost || LevelManager.GameWon) && SceneManager.GetActiveScene().buildIndex > 0 && pauseAction.triggered){
                 if(IsPaused){
                     Resume();
                 }

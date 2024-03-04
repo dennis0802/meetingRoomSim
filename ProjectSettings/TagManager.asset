@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - LookTarget
+  - PaperStack
+  - FoodBox
+  - CoffeeMaker
+  - Microwave
+  - Fridge
+  - Extinguisher
+  - Garbage
+  - FirstAid
   layers:
   - Default
   - TransparentFX
@@ -14,7 +22,7 @@ TagManager:
   - UI
   - Environment
   - Player
-  - 
+  - Interactable
   - 
   - 
   - 
