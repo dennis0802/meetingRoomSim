@@ -12,7 +12,7 @@ namespace Levels{
         /// <summary>
         /// Flavor text to describe why we're having a meeting
         /// </summary>
-        public string meetingTopic;
+        public string MeetingTopic {get; private set;}
 
         /// <summary>
         /// Task constructor - initialize dictionary and topic
@@ -40,7 +40,7 @@ namespace Levels{
 
             Random rnd = new Random();
             int topicId = rnd.Next(0, 12);
-            meetingTopic = topicId == 0 ? "Progress" : topicId == 1 ? "How To Work" : topicId == 2 ? "Your Day" : topicId == 3 ? "My Love Life's DOA" :
+            MeetingTopic = topicId == 0 ? "Progress" : topicId == 1 ? "How To Work" : topicId == 2 ? "Your Day" : topicId == 3 ? "My Love Life's DOA" :
                            topicId == 4 ? "Dept. Day-to-Day" : topicId == 5 ? "Dept. Projections" : topicId == 6 ? "Call of Duty" : topicId == 7 ? "Company Projections" :
                            topicId == 8 ? "Knocking on a Door" : topicId == 9 ? "Unhinged Profs" : topicId == 10 ? "Jupiter Sales" :
                            topicId == 11 ? "Conspiracies" : "Undefined";

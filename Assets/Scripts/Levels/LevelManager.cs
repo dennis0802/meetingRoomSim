@@ -59,7 +59,7 @@ namespace Levels{
         /// </summary>
         [Tooltip("List of task ids")]
         [SerializeField]
-        private List<int> taskIds;
+        public List<int> taskIds;
 
         /// <summary>
         /// Game over screen
@@ -99,6 +99,21 @@ namespace Levels{
         private AudioClip winSound;
 
         /// <summary>
+        /// Task object spawn audio clips
+        /// </summary>
+        [Tooltip("Task object spawn audio clips")]
+        [SerializeField]
+        private AudioClip[] taskObjectSpawnClips;
+
+        /// <summary>
+        /// Objects to spawn based on task
+        /// </summary>
+        [Header("Gameplay")]
+        [Tooltip("Objects to spawn based on task")]
+        [SerializeField]
+        private List<GameObject> taskObjects;
+
+        /// <summary>
         /// Audio source
         /// </sumamry>
         private AudioSource audioSource;
@@ -117,13 +132,17 @@ namespace Levels{
         /// Flags
         /// </summary>
         private bool setup, taskActive;
+
+        /// <summary>
+        /// Static flags
+        /// </summary>
         public static bool GameLost, GameWon;
 
         // Start is called before the first frame update
         void Start()
         {
             taskArchive = new Task();
-            taskTopic.text = taskArchive.meetingTopic;
+            taskTopic.text = taskArchive.MeetingTopic;
             audioSource = GetComponent<AudioSource>();
         }
 
@@ -164,6 +183,21 @@ namespace Levels{
                                 }
                             }
                             taskIds.Add(generated);
+
+                            // Spawn associated object if applicable
+                            switch(generated){
+                                case 2:
+                                    SpawnTaskObject(taskObjects[0], taskObjectSpawnClips[0], 0.5f);
+                                    break;
+                                case 4:
+                                    SpawnTaskObject(taskObjects[3], taskObjectSpawnClips[0], 0.5f);
+                                    break;
+                                case 10:
+                                    SpawnTaskObject(taskObjects[1], taskObjectSpawnClips[1], 0.5f);
+                                    break;
+                                default:
+                                    break;
+                            }
                             timer = 0.0f;
                         }
 
@@ -202,12 +236,28 @@ namespace Levels{
             }
         }
 
+        /// <summary>
+        /// Prepare to unload game objects to end game
+        /// </summary>
+        /// <param name="newScreen">The new screen to display to the player</param>
+        /// <param name="clip">The audio clip to play</param>
         void PrepGameOver(GameObject newScreen, AudioClip clip){
             mainScreen.SetActive(false);
             newScreen.SetActive(true);
             audioSource.PlayOneShot(clip, 0.5f);
             gameCamInput.enabled = false;
             Cursor.lockState = CursorLockMode.None;
+        }
+
+        /// <summary>
+        /// Spawn a task object
+        /// </summary>
+        /// <param name="target">The new task object</param>
+        /// <param name="clip">The audio clip to play</param>
+        /// <param name="volume">The volume of the audio clip</param>
+        void SpawnTaskObject(GameObject target, AudioClip clip, float volume){
+            target.SetActive(true);
+            audioSource.PlayOneShot(clip, volume);
         }
     }
 }

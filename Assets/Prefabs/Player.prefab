@@ -742,8 +742,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604a0277f23d8bf4aae797e0d5be93dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpSound: {fileID: 7704393707965309684}
   playerPointer: {fileID: 0}
+  levelManager: {fileID: 0}
+  objectNameText: {fileID: 0}
+  interactableObject: {fileID: 0}
+  interactionClips: []
   playerSpeed: 3
 --- !u!114 &7330171752583157399
 MonoBehaviour:
@@ -785,7 +788,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3bc6177f750e237449ac561a855e6ba4, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

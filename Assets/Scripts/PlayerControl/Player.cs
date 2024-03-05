@@ -4,23 +4,24 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
+using Levels;
 
 namespace PlayerControl{
     [DisallowMultipleComponent]
     public class Player : MonoBehaviour {
-        /// <summary>
-        /// Player jump sound
-        /// </summary> 
-        [Tooltip("Sound to play when jumping")]
-        [SerializeField]
-        private AudioSource jumpSound;
-
         /// <summary>
         /// Player pointer object
         /// </summary>
         [Tooltip("Player pointer object")]
         [SerializeField]
         private Image playerPointer;
+
+        /// <summary>
+        /// Level manager
+        /// </summary> 
+        [Tooltip("Level manager")]
+        [SerializeField]
+        private LevelManager levelManager;
 
         /// <summary>
         /// Text object to store the name of the object being viewed
@@ -35,6 +36,18 @@ namespace PlayerControl{
         [Tooltip("The object the player can interact with (ie. in line of sight")]
         [SerializeField]
         private GameObject interactableObject;
+
+        /// <summary>
+        /// Audio clips for interaction
+        /// </summary>
+        [Tooltip("Audio clips for interaction")]
+        [SerializeField]
+        private AudioClip[] interactionClips;
+
+        /// <summary>
+        /// Audio source
+        /// </summary> 
+        private AudioSource audioSource;
         
         /// <summary>
         /// Player input actions
@@ -90,6 +103,7 @@ namespace PlayerControl{
             endRun.performed += x => ReleaseSprint();
             cameraTransform = Camera.main.transform;
             controller = GetComponent<CharacterController>();
+            audioSource = GetComponent<AudioSource>();
         }
 
         // Update is called once per frame
@@ -121,13 +135,18 @@ namespace PlayerControl{
 
             // Player interaction
             if(canInteract && playerInteract.triggered && !PauseMenu.IsPaused){
-                Debug.Log("Player wants to interact with " + interactableObject.name);
+                if(interactableObject.CompareTag("FoodBox")){
+                    DespawnTaskObject(interactableObject.transform.parent.gameObject, 1, 0.5f, 2);
+                }
+                else if(interactableObject.CompareTag("PaperStack")){
+                    DespawnTaskObject(interactableObject, 2, 0.5f, 10);
+                }
             }
 
             // Jumping
             else if(playerJump.triggered && isGrounded){
                 playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-                jumpSound.Play();
+                audioSource.PlayOneShot(interactionClips[0], 0.5f);
             }
         }
 
@@ -152,6 +171,21 @@ namespace PlayerControl{
         /// </summary>
         private void ReleaseSprint(){
             isRunning = false;
+        }
+
+        /// <summary>
+        /// Despawn a task object
+        /// </summary>
+        /// <param name="target">The target game object to despawn</param>
+        /// <param name="clipNum">The associated audio clip number to play</param>
+        /// <param name="volume">The associated audio clip volume</param>
+        /// <param name="taskId">The associated task id to remove</param>
+        private void DespawnTaskObject(GameObject target, int clipNum, float volume, int taskId){
+            target.SetActive(false);
+            audioSource.PlayOneShot(interactionClips[clipNum], volume);
+            if(levelManager.taskIds.Contains(taskId)){
+                levelManager.taskIds.Remove(taskId);
+            }
         }
     }
 }
