@@ -210,14 +210,14 @@ namespace Levels{
 
                         // Increment patience if task is active or player is outside the room
                         if(!taskActive && player.transform.position.x <= 0f){
-                            patienceSlider.value -= Time.deltaTime*4;
+                            patienceSlider.value -= Time.deltaTime*3;
                         }
                         else{
                             if(taskActive){
                                 patienceSlider.value += Time.deltaTime*2;
                             }
                             if(player.transform.position.x > 0f){
-                                patienceSlider.value += Time.deltaTime*2;
+                                patienceSlider.value += Time.deltaTime;
                             }
                         }
                     }
