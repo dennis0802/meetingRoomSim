@@ -18,25 +18,25 @@ namespace Levels{
         /// Task constructor - initialize dictionary and topic
         /// </summary>
         public Task(){
-            taskDictionary.Add(0, "Brew coffee");
-            taskDictionary.Add(1, "Talk in meeting");
-            taskDictionary.Add(2, "Get food at entry");
+            taskDictionary.Add(0, "Brew coffee"); // Done
+            taskDictionary.Add(1, "Talk in meeting"); 
+            taskDictionary.Add(2, "Get food at entry"); // Done with audio
             taskDictionary.Add(3, "Adjust wires");
-            taskDictionary.Add(4, "Get device in hall");
+            taskDictionary.Add(4, "Get device in hall"); // done with audio
             taskDictionary.Add(5, "Create statements");
             taskDictionary.Add(6, "Shoo paparazzi");
-            taskDictionary.Add(7, "Get Michael on task");
+            taskDictionary.Add(7, "Get worker on task"); // Done
             taskDictionary.Add(8, "Shoo a temporal rift");
-            taskDictionary.Add(9, "Heat up food");
-            taskDictionary.Add(10, "Prepare paperwork");
-            taskDictionary.Add(11, "Turn on the lights");
+            taskDictionary.Add(9, "Heat up food"); // done
+            taskDictionary.Add(10, "Prepare paperwork"); // Done
+            taskDictionary.Add(11, "Turn on the lights"); // done
             taskDictionary.Add(12, "Hang TVs back up");
             taskDictionary.Add(13, "Shoo party ninjas");
             taskDictionary.Add(14, "Play Magic");
             taskDictionary.Add(15, "Stop a toxic joke");
             taskDictionary.Add(16, "Put out a fire");
             taskDictionary.Add(17, "Catch Maya the dog");
-            taskDictionary.Add(18, "Check fridge");
+            taskDictionary.Add(18, "Check fridge"); // done
 
             Random rnd = new Random();
             int topicId = rnd.Next(0, 12);

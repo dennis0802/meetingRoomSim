@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cinemachine;
 using UnityEngine.SceneManagement;
 using UnityEngine;
@@ -113,6 +114,14 @@ namespace Levels{
         [SerializeField]
         private List<GameObject> taskObjects;
 
+        [Tooltip("Workers in the scene")]
+        [SerializeField]
+        private List<GameObject> workers;
+
+        [Tooltip("Lights in the scene")]
+        [SerializeField]
+        private List<Light> lights;
+
         /// <summary>
         /// Audio source
         /// </sumamry>
@@ -144,6 +153,8 @@ namespace Levels{
             taskArchive = new Task();
             taskTopic.text = taskArchive.MeetingTopic;
             audioSource = GetComponent<AudioSource>();
+            workers.AddRange(GameObject.FindGameObjectsWithTag("Worker"));
+            workers = workers.Where(w => w.transform.parent == null).ToList();
         }
 
         // Update is called once per frame
@@ -190,10 +201,20 @@ namespace Levels{
                                     SpawnTaskObject(taskObjects[0], taskObjectSpawnClips[0], 0.5f);
                                     break;
                                 case 4:
-                                    SpawnTaskObject(taskObjects[3], taskObjectSpawnClips[0], 0.5f);
+                                    SpawnTaskObject(taskObjects[2], taskObjectSpawnClips[2], 0.5f);
+                                    break;
+                                case 7:
+                                    int selectedWorker = Random.Range(0, workers.Count);
+                                    string task = "Get " + workers[selectedWorker].name + " on task";
+                                    Worker worker = workers[selectedWorker].GetComponent<Worker>();
+                                    worker.OnTask = false;
+                                    taskArchive.taskDictionary[7] = task;
                                     break;
                                 case 10:
                                     SpawnTaskObject(taskObjects[1], taskObjectSpawnClips[1], 0.5f);
+                                    break;
+                                case 11:
+                                    ToggleLights(false);
                                     break;
                                 default:
                                     break;
@@ -225,6 +246,12 @@ namespace Levels{
                     else if(seconds <= 0 && taskActive){
                         for(int i = 0; i < taskIds.Count; i++){
                             taskText[i].text = "• " + taskArchive.taskDictionary[taskIds[i]];
+                        }
+
+                        if(taskIds.Count < 12){
+                            for(int i = taskIds.Count; i < 12; i++){
+                                taskText[i].text = "• ";
+                            }
                         }
                         patienceSlider.value += 0.01f;
                     }
@@ -258,6 +285,16 @@ namespace Levels{
         void SpawnTaskObject(GameObject target, AudioClip clip, float volume){
             target.SetActive(true);
             audioSource.PlayOneShot(clip, volume);
+        }
+
+        /// <summary>
+        /// Turn on/off the lights
+        /// </summary>
+        /// <param name="state">Is the light on or off?</param>
+        public void ToggleLights(bool state){
+            foreach(Light light in lights){
+                light.enabled = state;
+            }
         }
     }
 }

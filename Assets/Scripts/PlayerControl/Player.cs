@@ -181,6 +181,19 @@ namespace PlayerControl{
                     levelManager.taskIds.Remove(18);
                 }
 
+                else if(interactableObject.CompareTag("LightSwitch") && levelManager.taskIds.Contains(11)){
+                    statusText.text = "Lights on.";
+                    levelManager.ToggleLights(true);
+                    levelManager.taskIds.Remove(11);
+                }
+
+                else if(interactableObject.CompareTag("Worker") && levelManager.taskIds.Contains(7)){
+                    statusText.text = interactableObject.name + " disciplined.";
+                    Worker worker = interactableObject.GetComponent<Worker>();
+                    worker.OnTask = true;
+                    levelManager.taskIds.Remove(7);
+                }
+
                 // Start a delayed task only if it is not in progress yet.
                 else if(!inProgressTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
                     statusText.text = "Heating for 15s...";
@@ -260,7 +273,7 @@ namespace PlayerControl{
         void FixedUpdate(){
             RaycastHit hit;
             bool raycast = Physics.Raycast(cameraTransform.position, cameraTransform.TransformDirection(Vector3.forward), out hit, 3, 1<<8);
-            interactableObject = raycast ? hit.collider.gameObject : null;
+            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") ? hit.collider.gameObject.transform.parent.gameObject : hit.collider.gameObject : null;
             objectNameText.text = raycast ? interactableObject.name : "";
             canInteract = raycast;
             playerPointer.color = raycast ? Color.green : Color.white;
