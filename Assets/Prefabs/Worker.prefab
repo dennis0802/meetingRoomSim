@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 1601462744923401000}
   m_Layer: 0
   m_Name: Worker
-  m_TagString: Untagged
+  m_TagString: Worker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -249,6 +249,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46dba218fc79d134c8f762b15f3bf776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShirtColors:
+  - {fileID: 2100000, guid: d8f05c7824cf8414992057544df01eef, type: 2}
+  - {fileID: 2100000, guid: ac9b06431a396d34db9936765cb384f8, type: 2}
+  - {fileID: 2100000, guid: 5ba1048971e71044ebe4c3b6c84c88ef, type: 2}
+  - {fileID: 2100000, guid: a0f18854a5b1c1f40a1027d6b8e42fe2, type: 2}
+  - {fileID: 2100000, guid: 0d72edca517b0374ea0e49ddd55f17c4, type: 2}
+  - {fileID: 2100000, guid: c5eacde4f980b9243a302864e49d289b, type: 2}
+  - {fileID: 2100000, guid: fb64b5c3e985dd744acb0d92ac48123f, type: 2}
+  - {fileID: 2100000, guid: 7363d4c5126330f4bb93bda2a2ae7db0, type: 2}
+  - {fileID: 2100000, guid: 24f5369e2321d9e48b640d140d370e21, type: 2}
+  - {fileID: 2100000, guid: d1db857662a26924498dcf8182187c1e, type: 2}
+  SkinTones:
+  - {fileID: 2100000, guid: 39bc056f528f5f041a56e5d56a043518, type: 2}
+  - {fileID: 2100000, guid: 8b4b40787cb2f684dbe69cfd9aae3970, type: 2}
+  - {fileID: 2100000, guid: 0d47b7ed0ee3bf64eb03574485a7c5d4, type: 2}
+  HairColors:
+  - {fileID: 2100000, guid: d702b6165417aa24099ce49d64fa5897, type: 2}
+  - {fileID: 2100000, guid: 48a6ab2972a24674f96ab1911dd701d3, type: 2}
+  - {fileID: 2100000, guid: a0f18854a5b1c1f40a1027d6b8e42fe2, type: 2}
+  - {fileID: 2100000, guid: a7ef822af4d0e05409b1a5e4532fd604, type: 2}
+  - {fileID: 2100000, guid: 0d72edca517b0374ea0e49ddd55f17c4, type: 2}
+  - {fileID: 2100000, guid: 7363d4c5126330f4bb93bda2a2ae7db0, type: 2}
+  - {fileID: 2100000, guid: fb64b5c3e985dd744acb0d92ac48123f, type: 2}
+  - {fileID: 2100000, guid: 5ba1048971e71044ebe4c3b6c84c88ef, type: 2}
+  WorkerHair:
+  - {fileID: 4370925015168422880}
+  - {fileID: 4370925016596702657}
+  - {fileID: 4370925015929191074}
+  - {fileID: 4370925015874128299}
+  Shirt: {fileID: 4370925015161242926}
+  Head: {fileID: 4370925016130192192}
+  OnTask: 1
 --- !u!1 &4370925015161242926
 GameObject:
   m_ObjectHideFlags: 0

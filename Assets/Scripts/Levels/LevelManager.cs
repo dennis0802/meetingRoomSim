@@ -100,6 +100,13 @@ namespace Levels{
         private AudioClip winSound;
 
         /// <summary>
+        /// Sound to play when generating a task
+        /// </summary>
+        [Tooltip("Sound to play when generating a task")]
+        [SerializeField]
+        private AudioClip taskSound;
+
+        /// <summary>
         /// Task object spawn audio clips
         /// </summary>
         [Tooltip("Task object spawn audio clips")]
@@ -117,6 +124,14 @@ namespace Levels{
         [Tooltip("Workers in the scene")]
         [SerializeField]
         private List<GameObject> workers;
+
+        [Tooltip("TVs in the scene")]
+        [SerializeField]
+        private List<GameObject> tvs;
+
+        [Tooltip("TV original positions")]
+        [SerializeField]
+        private List<Vector3> tvStartingPositions;
 
         [Tooltip("Lights in the scene")]
         [SerializeField]
@@ -182,6 +197,12 @@ namespace Levels{
                             taskText[i].text = "• " + taskArchive.taskDictionary[taskIds[i]];
                         }
 
+                        if(taskIds.Count < 12){
+                            for(int i = taskIds.Count; i < 12; i++){
+                                taskText[i].text = "• ";
+                            }
+                        }
+
                         // Add tasks every interval provided the list isn't full
                         if(timer >= taskInterval && taskIds.Count < 12){
                             int generated;
@@ -196,29 +217,56 @@ namespace Levels{
                             taskIds.Add(generated);
 
                             // Spawn associated object if applicable
+                            int selectedWorker;
+                            string task;
+                            Worker worker;
+
                             switch(generated){
+                                case 0:
+                                    break;
+                                case 1:
+                                    break;
                                 case 2:
                                     SpawnTaskObject(taskObjects[0], taskObjectSpawnClips[0], 0.5f);
+                                    break;
+                                case 3:
+                                    selectedWorker = Random.Range(0, workers.Count);
+                                    task = "Fix " + workers[selectedWorker].name + "'s laptop";
+                                    taskArchive.taskDictionary[3] = task;
                                     break;
                                 case 4:
                                     SpawnTaskObject(taskObjects[2], taskObjectSpawnClips[2], 0.5f);
                                     break;
                                 case 7:
-                                    int selectedWorker = Random.Range(0, workers.Count);
-                                    string task = "Get " + workers[selectedWorker].name + " on task";
-                                    Worker worker = workers[selectedWorker].GetComponent<Worker>();
+                                    selectedWorker = Random.Range(0, workers.Count);
+                                    task = "Get " + workers[selectedWorker].name + " on task";
+                                    worker = workers[selectedWorker].GetComponent<Worker>();
                                     worker.OnTask = false;
                                     taskArchive.taskDictionary[7] = task;
+                                    break;
+                                case 9:
                                     break;
                                 case 10:
                                     SpawnTaskObject(taskObjects[1], taskObjectSpawnClips[1], 0.5f);
                                     break;
                                 case 11:
                                     ToggleLights(false);
+                                    audioSource.PlayOneShot(taskObjectSpawnClips[2], 1.0f);
+                                    break;
+                                case 12:
+                                    ToggleTVs(false);
+                                    audioSource.PlayOneShot(taskObjectSpawnClips[3], 1.0f);
+                                    break;
+                                case 14:
+                                    break;
+                                case 16:
+                                    break;
+                                case 18:
                                     break;
                                 default:
                                     break;
                             }
+                            audioSource.PlayOneShot(taskSound, 1.0f);
                             timer = 0.0f;
                         }
 
@@ -294,6 +342,32 @@ namespace Levels{
         public void ToggleLights(bool state){
             foreach(Light light in lights){
                 light.enabled = state;
+            }
+        }
+
+        /// <summary>
+        /// Hang/drop the TVs
+        /// </summary>
+        /// <param name="state">Are the TVs hanging from the wall?</param>
+        public void ToggleTVs(bool state){
+            // Hanging: put the TVs back in their starting position
+            if(state){
+                int i = 0;
+                foreach(GameObject tv in tvs){
+                    Rigidbody r = tv.GetComponent<Rigidbody>();
+                    r.useGravity = false;
+                    r.isKinematic = true;
+                    tv.transform.position = tvStartingPositions[i];
+                    i++;
+                }
+            }
+            // Otherwise trigger gravity
+            else{
+                foreach(GameObject tv in tvs){
+                    Rigidbody r = tv.GetComponent<Rigidbody>();
+                    r.useGravity = true;
+                    r.isKinematic = false;
+                }
             }
         }
     }

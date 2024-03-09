@@ -16,6 +16,7 @@ TagManager:
   - Device
   - LightSwitch
   - Worker
+  - TV
   layers:
   - Default
   - TransparentFX

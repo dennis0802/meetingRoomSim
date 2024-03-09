@@ -53,6 +53,13 @@ namespace PlayerControl{
         private AudioClip[] interactionClips;
 
         /// <summary>
+        /// Audio source for footsteps
+        /// </summary> 
+        [Tooltip("Audio source for footsteps")]
+        [SerializeField]
+        private AudioSource footstepsSound;
+
+        /// <summary>
         /// Audio source
         /// </summary> 
         private AudioSource audioSource;
@@ -150,6 +157,7 @@ namespace PlayerControl{
             move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
             move.y = 0.0f;
             controller.Move(move * Time.deltaTime * playerSpeed);
+            footstepsSound.enabled = !input.Equals(Vector2.zero);
 
             // Falling
             playerVelocity.y += gravity * Time.deltaTime;
@@ -161,28 +169,42 @@ namespace PlayerControl{
 
             // Player interaction
             if(canInteract && playerInteract.triggered && !PauseMenu.IsPaused){
-                if(interactableObject.CompareTag("FoodBox")){
+                if(interactableObject.CompareTag("FoodBox") && levelManager.taskIds.Contains(2)){
                     statusText.text = "Food collected.";
                     DespawnTaskObject(interactableObject.transform.parent.gameObject, 1, 0.5f, 2);
                 }
 
-                else if(interactableObject.CompareTag("PaperStack")){
+                else if(interactableObject.CompareTag("PaperStack") && levelManager.taskIds.Contains(10)){
                     statusText.text = "Paperwork prepared.";
                     DespawnTaskObject(interactableObject, 2, 0.5f, 10);
                 }
 
-                else if(interactableObject.CompareTag("Device")){
+                else if(interactableObject.CompareTag("Device") && levelManager.taskIds.Contains(4)){
                     statusText.text = "Device collected.";
                     DespawnTaskObject(interactableObject, 3, 0.5f, 4);
                 }
 
                 else if(interactableObject.CompareTag("Fridge") && levelManager.taskIds.Contains(18)){
                     statusText.text = "Fridge checked.";
+                    audioSource.PlayOneShot(interactionClips[7], 1.0f);
                     levelManager.taskIds.Remove(18);
+                }
+
+                else if(interactableObject.CompareTag("FirstAid") && levelManager.taskIds.Contains(16)){
+                    statusText.text = "Sick burn treated.";
+                    audioSource.PlayOneShot(interactionClips[7], 1.0f);
+                    levelManager.taskIds.Remove(16);
+                }
+
+                else if(interactableObject.CompareTag("Extinguisher") && levelManager.taskIds.Contains(14)){
+                    statusText.text = "Extinguisher inspected.";
+                    audioSource.PlayOneShot(interactionClips[8], 1.0f);
+                    levelManager.taskIds.Remove(14);
                 }
 
                 else if(interactableObject.CompareTag("LightSwitch") && levelManager.taskIds.Contains(11)){
                     statusText.text = "Lights on.";
+                    audioSource.PlayOneShot(interactionClips[6], 1.0f);
                     levelManager.ToggleLights(true);
                     levelManager.taskIds.Remove(11);
                 }
@@ -194,9 +216,17 @@ namespace PlayerControl{
                     levelManager.taskIds.Remove(7);
                 }
 
+                else if(interactableObject.CompareTag("TV") && levelManager.taskIds.Contains(12)){
+                    statusText.text = "TVs placed back.";
+                    audioSource.PlayOneShot(interactionClips[1], 1.0f);
+                    levelManager.ToggleTVs(true);
+                    levelManager.taskIds.Remove(12);
+                }
+
                 // Start a delayed task only if it is not in progress yet.
                 else if(!inProgressTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
                     statusText.text = "Heating for 15s...";
+                    audioSource.PlayOneShot(interactionClips[4], 1.0f);
                     DelayedTask task = new DelayedTask(9, 5.0f);
                     inProgressTasks.Add(9);
                     delayedTasks.Add(task);
@@ -211,6 +241,7 @@ namespace PlayerControl{
 
                 else if(!inProgressTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
                     statusText.text = "Brewing coffee...";
+                    audioSource.PlayOneShot(interactionClips[4], 1.0f);
                     DelayedTask task = new DelayedTask(0, 10.0f);
                     inProgressTasks.Add(0);
                     delayedTasks.Add(task);
@@ -249,9 +280,11 @@ namespace PlayerControl{
                         switch(id){
                             case 0:
                                 statusText.text = "Coffee is ready.";
+                                audioSource.PlayOneShot(interactionClips[5], 1.0f);
                                 break;
                             case 9:
                                 statusText.text = "Microwave is done.";
+                                audioSource.PlayOneShot(interactionClips[5], 1.0f);
                                 break;
                         }
 
