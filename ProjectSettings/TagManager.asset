@@ -17,6 +17,9 @@ TagManager:
   - LightSwitch
   - Worker
   - TV
+  - PersonalOffice
+  - FacilitiesIT
+  - Laptop
   layers:
   - Default
   - TransparentFX

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace UI{
     [DisallowMultipleComponent]
@@ -17,10 +18,21 @@ namespace UI{
         // 0 = main, 1 = mode selection, 2 = about, 3 = scores/settings, 4 = credits
         private int menuIndex = 0;
 
+        public static GameObject Menu;
+        public static Animation Anim;
+
         void Start(){
             anim = cameraObj.GetComponent<Animation>();
+            Menu = gameObject.transform.GetChild(0).transform.GetChild(1).gameObject;
+            Anim = anim;
         }
 
+        public static void ReloadMenu(){
+            Camera.main.transform.rotation = Quaternion.identity;
+            Anim.Play("back_to_default");
+            Menu.SetActive(true);
+        }
+            
         /// <summary>
         /// Play the game
         /// </summary>

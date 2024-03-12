@@ -85,6 +85,20 @@ namespace Levels{
         private GameObject mainScreen;
 
         /// <summary>
+        /// Personal upgrade screen
+        /// </summary>
+        [Tooltip("Personal upgrade screen")]
+        [SerializeField]
+        private GameObject personalUpgradeScreen;
+
+        /// <summary>
+        /// Facilities upgrade screen
+        /// </summary>
+        [Tooltip("Facilities upgrade screen")]
+        [SerializeField]
+        private GameObject facilitiesUpgradeScreen;
+
+        /// <summary>
         /// Losing audio clip
         /// </summary>
         [Header("Audio")]
@@ -121,6 +135,10 @@ namespace Levels{
         [SerializeField]
         private List<GameObject> taskObjects;
 
+        [Tooltip("Worker's laptop screen")]
+        [SerializeField]
+        private GameObject laptopScreen;
+
         [Tooltip("Workers in the scene")]
         [SerializeField]
         private List<GameObject> workers;
@@ -136,6 +154,11 @@ namespace Levels{
         [Tooltip("Lights in the scene")]
         [SerializeField]
         private List<Light> lights;
+
+        /// <summary>
+        /// Office credit
+        /// </summary>
+        private int officeCredit;
 
         /// <summary>
         /// Audio source
@@ -160,7 +183,7 @@ namespace Levels{
         /// <summary>
         /// Static flags
         /// </summary>
-        public static bool GameLost, GameWon;
+        public static bool GameLost, GameWon, InUpgrades;
 
         // Start is called before the first frame update
         void Start()
@@ -233,6 +256,8 @@ namespace Levels{
                                     selectedWorker = Random.Range(0, workers.Count);
                                     task = "Fix " + workers[selectedWorker].name + "'s laptop";
                                     taskArchive.taskDictionary[3] = task;
+                                    laptopScreen.GetComponent<Renderer>().material.color = Color.blue;
+                                    audioSource.PlayOneShot(taskObjectSpawnClips[4], 0.5f);
                                     break;
                                 case 4:
                                     SpawnTaskObject(taskObjects[2], taskObjectSpawnClips[2], 0.5f);
@@ -255,7 +280,7 @@ namespace Levels{
                                     break;
                                 case 12:
                                     ToggleTVs(false);
-                                    audioSource.PlayOneShot(taskObjectSpawnClips[3], 1.0f);
+                                    audioSource.PlayOneShot(taskObjectSpawnClips[3], 0.5f);
                                     break;
                                 case 14:
                                     break;
@@ -357,7 +382,7 @@ namespace Levels{
                     Rigidbody r = tv.GetComponent<Rigidbody>();
                     r.useGravity = false;
                     r.isKinematic = true;
-                    tv.transform.position = tvStartingPositions[i];
+                    tv.transform.localPosition = tvStartingPositions[i];
                     i++;
                 }
             }
@@ -369,6 +394,36 @@ namespace Levels{
                     r.isKinematic = false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Open an upgrades screen
+        /// </summary>
+        /// <param name="id">The id of the menu to open; 0 for personal, 1 for facilities</param>
+        public void OpenUpgrades(int id){
+            Time.timeScale = 0.0f;
+            gameCamInput.enabled = false;
+            //mainScreen.SetActive(false);
+            if(id == 0){
+                personalUpgradeScreen.SetActive(true);
+            }
+            else{
+                facilitiesUpgradeScreen.SetActive(true);
+            }
+            audioSource.PlayOneShot(taskObjectSpawnClips[0], 0.5f);
+            InUpgrades = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        /// <summary>
+        /// Close an upgrades screen
+        /// </summary>
+        public void CloseUpgrades(){
+            Time.timeScale = 1.0f;
+            gameCamInput.enabled = true;
+            audioSource.PlayOneShot(taskObjectSpawnClips[1], 1.0f);
+            InUpgrades = false;
+            Cursor.lockState = CursorLockMode.Locked;
         }
     }
 }

@@ -25,6 +25,13 @@ namespace PlayerControl{
         private LevelManager levelManager;
 
         /// <summary>
+        /// Text object to store the amount of office credit
+        /// </summary>
+        [Tooltip("Text object to store the amount of office credit")]
+        [SerializeField]
+        private TextMeshProUGUI creditText;
+
+        /// <summary>
         /// Text object to store the name of the object being viewed
         /// </summary>
         [Tooltip("Text object to store the name of the object being viewed")]
@@ -37,6 +44,10 @@ namespace PlayerControl{
         [Tooltip("Text object to store status (ie. on click, display text)")]
         [SerializeField]
         private TextMeshProUGUI statusText;
+
+        [Tooltip("Default color for laptop screen")]
+        [SerializeField]
+        private Material laptopScreen;
 
         /// <summary>
         /// The object the player can interact with (ie. in line of sight)
@@ -108,6 +119,11 @@ namespace PlayerControl{
         /// List of tasks based on progress
         /// </summary>
         private List<int> finishedDelayTasks, inProgressTasks;
+
+        /// <summary>
+        /// The amount of office credit the player has
+        /// </summary>
+        private int officeCredit = 0;
         
         /// <summary>
         /// Player speed
@@ -168,96 +184,8 @@ namespace PlayerControl{
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
             // Player interaction
-            if(canInteract && playerInteract.triggered && !PauseMenu.IsPaused){
-                if(interactableObject.CompareTag("FoodBox") && levelManager.taskIds.Contains(2)){
-                    statusText.text = "Food collected.";
-                    DespawnTaskObject(interactableObject.transform.parent.gameObject, 1, 0.5f, 2);
-                }
-
-                else if(interactableObject.CompareTag("PaperStack") && levelManager.taskIds.Contains(10)){
-                    statusText.text = "Paperwork prepared.";
-                    DespawnTaskObject(interactableObject, 2, 0.5f, 10);
-                }
-
-                else if(interactableObject.CompareTag("Device") && levelManager.taskIds.Contains(4)){
-                    statusText.text = "Device collected.";
-                    DespawnTaskObject(interactableObject, 3, 0.5f, 4);
-                }
-
-                else if(interactableObject.CompareTag("Fridge") && levelManager.taskIds.Contains(18)){
-                    statusText.text = "Fridge checked.";
-                    audioSource.PlayOneShot(interactionClips[7], 1.0f);
-                    levelManager.taskIds.Remove(18);
-                }
-
-                else if(interactableObject.CompareTag("FirstAid") && levelManager.taskIds.Contains(16)){
-                    statusText.text = "Sick burn treated.";
-                    audioSource.PlayOneShot(interactionClips[7], 1.0f);
-                    levelManager.taskIds.Remove(16);
-                }
-
-                else if(interactableObject.CompareTag("Extinguisher") && levelManager.taskIds.Contains(14)){
-                    statusText.text = "Extinguisher inspected.";
-                    audioSource.PlayOneShot(interactionClips[8], 1.0f);
-                    levelManager.taskIds.Remove(14);
-                }
-
-                else if(interactableObject.CompareTag("LightSwitch") && levelManager.taskIds.Contains(11)){
-                    statusText.text = "Lights on.";
-                    audioSource.PlayOneShot(interactionClips[6], 1.0f);
-                    levelManager.ToggleLights(true);
-                    levelManager.taskIds.Remove(11);
-                }
-
-                else if(interactableObject.CompareTag("Worker") && levelManager.taskIds.Contains(7)){
-                    statusText.text = interactableObject.name + " disciplined.";
-                    Worker worker = interactableObject.GetComponent<Worker>();
-                    worker.OnTask = true;
-                    levelManager.taskIds.Remove(7);
-                }
-
-                else if(interactableObject.CompareTag("TV") && levelManager.taskIds.Contains(12)){
-                    statusText.text = "TVs placed back.";
-                    audioSource.PlayOneShot(interactionClips[1], 1.0f);
-                    levelManager.ToggleTVs(true);
-                    levelManager.taskIds.Remove(12);
-                }
-
-                // Start a delayed task only if it is not in progress yet.
-                else if(!inProgressTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
-                    statusText.text = "Heating for 15s...";
-                    audioSource.PlayOneShot(interactionClips[4], 1.0f);
-                    DelayedTask task = new DelayedTask(9, 5.0f);
-                    inProgressTasks.Add(9);
-                    delayedTasks.Add(task);
-                }
-
-                else if(finishedDelayTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
-                    statusText.text = "Hot food collected.";
-                    levelManager.taskIds.Remove(9);
-                    inProgressTasks.Remove(9);
-                    finishedDelayTasks.Remove(9);
-                }
-
-                else if(!inProgressTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
-                    statusText.text = "Brewing coffee...";
-                    audioSource.PlayOneShot(interactionClips[4], 1.0f);
-                    DelayedTask task = new DelayedTask(0, 10.0f);
-                    inProgressTasks.Add(0);
-                    delayedTasks.Add(task);
-                }
-
-                else if(finishedDelayTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
-                    statusText.text = "Coffee brewed.";
-                    levelManager.taskIds.Remove(0);
-                    inProgressTasks.Remove(0);
-                    finishedDelayTasks.Remove(0);
-                }
-
-                // The related task is not active
-                else{
-                    statusText.text = "No problem here.";
-                }
+            if(canInteract && playerInteract.triggered && !PauseMenu.IsPaused && !LevelManager.InUpgrades){
+                Interact();
             }
 
             // Jumping
@@ -301,13 +229,16 @@ namespace PlayerControl{
                     timer = 0.0f;
                 }
             }
+
+            creditText.text = officeCredit.ToString();
         }
 
         void FixedUpdate(){
             RaycastHit hit;
             bool raycast = Physics.Raycast(cameraTransform.position, cameraTransform.TransformDirection(Vector3.forward), out hit, 3, 1<<8);
-            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") ? hit.collider.gameObject.transform.parent.gameObject : hit.collider.gameObject : null;
-            objectNameText.text = raycast ? interactableObject.name : "";
+            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") || hit.collider.gameObject.CompareTag("FacilitiesIT") 
+                                         ? hit.collider.gameObject.transform.parent.gameObject : hit.collider.gameObject : null;
+            objectNameText.text = raycast ? hit.collider.gameObject.CompareTag("FacilitiesIT") ? interactableObject.name + " (IT)": interactableObject.name : "";
             canInteract = raycast;
             playerPointer.color = raycast ? Color.green : Color.white;
         }
@@ -338,6 +269,126 @@ namespace PlayerControl{
             audioSource.PlayOneShot(interactionClips[clipNum], volume);
             if(levelManager.taskIds.Contains(taskId)){
                 levelManager.taskIds.Remove(taskId);
+            }
+        }
+
+        /// <summary>
+        /// Interact with an object
+        /// </summary>
+        private void Interact(){
+            if(interactableObject.CompareTag("FoodBox") && levelManager.taskIds.Contains(2)){
+                statusText.text = "Food collected.";
+                DespawnTaskObject(interactableObject.transform.parent.gameObject, 1, 0.5f, 2);
+                officeCredit += 5;
+            }
+
+            else if(interactableObject.CompareTag("PersonalOffice")){
+                levelManager.OpenUpgrades(0);
+            }
+
+            else if(interactableObject.CompareTag("FacilitiesIT")){
+                levelManager.OpenUpgrades(1);
+            }
+
+            else if(interactableObject.CompareTag("Laptop") && levelManager.taskIds.Contains(3)){
+                statusText.text = "Laptop restarted.";
+                audioSource.PlayOneShot(interactionClips[9], 1.0f);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("PaperStack") && levelManager.taskIds.Contains(10)){
+                statusText.text = "Paperwork prepared.";
+                DespawnTaskObject(interactableObject, 2, 0.5f, 10);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("Device") && levelManager.taskIds.Contains(4)){
+                statusText.text = "Device collected.";
+                DespawnTaskObject(interactableObject, 3, 0.5f, 4);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("Fridge") && levelManager.taskIds.Contains(18)){
+                statusText.text = "Fridge checked.";
+                audioSource.PlayOneShot(interactionClips[7], 1.0f);
+                levelManager.taskIds.Remove(18);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("FirstAid") && levelManager.taskIds.Contains(16)){
+                statusText.text = "Sick burn treated.";
+                audioSource.PlayOneShot(interactionClips[7], 1.0f);
+                levelManager.taskIds.Remove(16);
+                officeCredit += 5;
+            }
+
+            else if(interactableObject.CompareTag("Extinguisher") && levelManager.taskIds.Contains(14)){
+                statusText.text = "Extinguisher inspected.";
+                audioSource.PlayOneShot(interactionClips[8], 1.0f);
+                levelManager.taskIds.Remove(14);
+                officeCredit += 5;
+            }
+
+            else if(interactableObject.CompareTag("LightSwitch") && levelManager.taskIds.Contains(11)){
+                statusText.text = "Lights on.";
+                audioSource.PlayOneShot(interactionClips[6], 1.0f);
+                levelManager.ToggleLights(true);
+                levelManager.taskIds.Remove(11);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("Worker") && levelManager.taskIds.Contains(7)){
+                statusText.text = interactableObject.name + " disciplined.";
+                Worker worker = interactableObject.GetComponent<Worker>();
+                worker.OnTask = true;
+                levelManager.taskIds.Remove(7);
+                officeCredit += 10;
+            }
+
+            else if(interactableObject.CompareTag("TV") && levelManager.taskIds.Contains(12)){
+                statusText.text = "TVs placed back.";
+                audioSource.PlayOneShot(interactionClips[1], 1.0f);
+                levelManager.ToggleTVs(true);
+                levelManager.taskIds.Remove(12);
+                officeCredit += 10;
+            }
+
+            // Start a delayed task only if it is not in progress yet.
+            else if(!inProgressTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
+                statusText.text = "Heating for 15s...";
+                audioSource.PlayOneShot(interactionClips[4], 1.0f);
+                DelayedTask task = new DelayedTask(9, 5.0f);
+                inProgressTasks.Add(9);
+                delayedTasks.Add(task);
+            }
+
+            else if(finishedDelayTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
+                statusText.text = "Hot food collected.";
+                levelManager.taskIds.Remove(9);
+                inProgressTasks.Remove(9);
+                finishedDelayTasks.Remove(9);
+                officeCredit += 5;
+            }
+
+            else if(!inProgressTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
+                statusText.text = "Brewing coffee...";
+                audioSource.PlayOneShot(interactionClips[4], 1.0f);
+                DelayedTask task = new DelayedTask(0, 10.0f);
+                inProgressTasks.Add(0);
+                delayedTasks.Add(task);
+            }
+
+            else if(finishedDelayTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
+                statusText.text = "Coffee brewed.";
+                levelManager.taskIds.Remove(0);
+                inProgressTasks.Remove(0);
+                finishedDelayTasks.Remove(0);
+                officeCredit += 5;
+            }
+
+            // The related task is not active
+            else{
+                statusText.text = "No problem here.";
             }
         }
     }

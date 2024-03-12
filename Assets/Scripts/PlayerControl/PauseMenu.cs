@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Levels;
+using UI;
 
 namespace PlayerControl{
     [DisallowMultipleComponent]
@@ -76,7 +77,7 @@ namespace PlayerControl{
         }
 
         void Update(){
-            if(!(LevelManager.GameLost || LevelManager.GameWon) && SceneManager.GetActiveScene().buildIndex > 0 && pauseAction.triggered){
+            if(!(LevelManager.GameLost || LevelManager.GameWon || LevelManager.InUpgrades) && SceneManager.GetActiveScene().buildIndex > 0 && pauseAction.triggered){
                 if(IsPaused){
                     Resume();
                 }
@@ -119,6 +120,7 @@ namespace PlayerControl{
             IsPaused = false;
             pauseMenuUI.SetActive(false);
             Time.timeScale = 1.0f;
+            MenuController.ReloadMenu();
             LoadLevel(0);
         }
 

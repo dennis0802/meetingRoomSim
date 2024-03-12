@@ -37,6 +37,8 @@ namespace UI{
 
                 yield return null;
             }
+
+            loadingScreen.SetActive(false);
         }
     }
 }
