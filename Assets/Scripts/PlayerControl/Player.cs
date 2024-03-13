@@ -25,6 +25,13 @@ namespace PlayerControl{
         private LevelManager levelManager;
 
         /// <summary>
+        /// Shop menus
+        /// </summary> 
+        [Tooltip("Shop menus")]
+        [SerializeField]
+        private ShopMenu personalShop, facilitiesShop;
+
+        /// <summary>
         /// Text object to store the amount of office credit
         /// </summary>
         [Tooltip("Text object to store the amount of office credit")]
@@ -123,7 +130,7 @@ namespace PlayerControl{
         /// <summary>
         /// The amount of office credit the player has
         /// </summary>
-        private int officeCredit = 0;
+        public int officeCredit = 0;
         
         /// <summary>
         /// Player speed
@@ -230,7 +237,7 @@ namespace PlayerControl{
                 }
             }
 
-            creditText.text = officeCredit.ToString();
+            creditText.text = "CREDITS: " + officeCredit.ToString();
         }
 
         void FixedUpdate(){
@@ -270,6 +277,22 @@ namespace PlayerControl{
             if(levelManager.taskIds.Contains(taskId)){
                 levelManager.taskIds.Remove(taskId);
             }
+        }
+
+        /// <summary>
+        /// Get player's office credit
+        /// </summary>
+        /// <returns>The amount of office credits the player has.</returns>
+        public int GetCredits(){
+            return officeCredit;
+        }
+
+        /// <summary>
+        /// Set player's office credit
+        /// </summary>
+        /// <param name="credits">The new amount of credits</param>
+        public void SetCredits(int credits){
+            this.officeCredit = credits;
         }
 
         /// <summary>
