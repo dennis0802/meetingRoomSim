@@ -20,3 +20,6 @@ Uses the Unity Game Engine with C# scripting and a MongoDB database
 * Fridge Door Closing Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=98782">Pixabay</a>
 * Computer Bootup Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=103697">Pixabay</a>
 * Windows Error Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=35894">Pixabay</a>
+* Cash Register Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=87313">Pixabay</a>
+* Machine Shutdown Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=87410">Pixabay</a>
+* Computer Shutdown Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=101297">Pixabay</a>

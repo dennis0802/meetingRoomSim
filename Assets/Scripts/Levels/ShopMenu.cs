@@ -83,6 +83,14 @@ namespace Levels{
             player.SetCredits(player.GetCredits() - upgradeCosts[id]);
             upgradeCosts[id] += upgradeCosts[id];
             UpgradesPurchased[id]++;
+
+            if(gameObject.name.Equals("PersonalUpgrades")){
+                switch(id){
+                    case 0:
+                        player.basePlayerSpeed += 1.0f;
+                        break;
+                }
+            }
         }
     }
 }

@@ -53,6 +53,9 @@ namespace Levels{
         [Tooltip("Is this worker on task?")]
         public bool OnTask = true;
 
+        [Tooltip("Has the player talked to this worker?")]
+        public bool HasTalkedTo;
+
         void Start(){
             // 0 will get male hair style, 1 will get female hairstyle, 2 will include all styles for other identification
             WorkerGender = (Gender)(Random.Range(0,3));
@@ -96,15 +99,15 @@ namespace Levels{
         void Update(){
             // If on task, face forward, otherwise rotate in place.
             if(gameObject.CompareTag("Worker")){
-                if(!OnTask){
-                        transform.Rotate(0,60*Time.deltaTime,0);
+                    if(!OnTask){
+                        transform.Rotate(0,180*Time.deltaTime,0);
                     }
                     else{
                         Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
                         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
                     }
-                }
             }
+        }
 
 
         /// <summary>

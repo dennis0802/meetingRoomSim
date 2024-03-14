@@ -26,7 +26,7 @@ namespace Levels{
             taskDictionary.Add(5, "Create statements");
             taskDictionary.Add(6, "Shoo paparazzi");
             taskDictionary.Add(7, "Get worker on task"); // Done
-            taskDictionary.Add(8, "Shoo a temporal rift");
+            taskDictionary.Add(8, "Shoo a temporal rift"); // done with audio
             taskDictionary.Add(9, "Heat up food"); // done with audio
             taskDictionary.Add(10, "Prepare paperwork"); // Done with audio
             taskDictionary.Add(11, "Turn on the lights"); // done with audio

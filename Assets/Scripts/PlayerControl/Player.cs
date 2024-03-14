@@ -52,10 +52,6 @@ namespace PlayerControl{
         [SerializeField]
         private TextMeshProUGUI statusText;
 
-        [Tooltip("Default color for laptop screen")]
-        [SerializeField]
-        private Material laptopScreen;
-
         /// <summary>
         /// The object the player can interact with (ie. in line of sight)
         /// </summary>
@@ -135,12 +131,17 @@ namespace PlayerControl{
         /// <summary>
         /// Player speed
         /// </summary>  
-        public float playerSpeed = 3.0f;
+        public float playerSpeed, basePlayerSpeed = 3.0f;
 
         /// <summary>
         /// Player input object
         /// </summary> 
         private PlayerInput playerInput;
+
+        /// <summary>
+        /// Temp variable for temporal rift
+        /// </summary>
+        private GameObject temporalRift;
 
         // Start is called before the first frame update
         private void Start()
@@ -172,7 +173,7 @@ namespace PlayerControl{
             }
 
             // Running - only when key is hit
-            playerSpeed = isRunning ? 6.0f : 3.0f;
+            playerSpeed = isRunning ? basePlayerSpeed * 2 : basePlayerSpeed;
 
             // Movement
             Vector2 input = playerMove.ReadValue<Vector2>();
@@ -180,7 +181,7 @@ namespace PlayerControl{
             move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
             move.y = 0.0f;
             controller.Move(move * Time.deltaTime * playerSpeed);
-            footstepsSound.enabled = !input.Equals(Vector2.zero);
+            footstepsSound.enabled = !input.Equals(Vector2.zero) && isGrounded;
 
             // Falling
             playerVelocity.y += gravity * Time.deltaTime;
@@ -216,14 +217,24 @@ namespace PlayerControl{
                             case 0:
                                 statusText.text = "Coffee is ready.";
                                 audioSource.PlayOneShot(interactionClips[5], 1.0f);
+                                finishedDelayTasks.Add(id);
+                                break;
+                            case 3:
+                                statusText.text = "Laptop is ready to be started.";
+                                finishedDelayTasks.Add(id);
+                                break;
+                            case 8:
+                                statusText.text = "Temporal rift closed.";
+                                inProgressTasks.Remove(8);
+                                DespawnTaskObject(temporalRift, 11, 1.0f, 8);
+                                officeCredit += 25;
                                 break;
                             case 9:
                                 statusText.text = "Microwave is done.";
                                 audioSource.PlayOneShot(interactionClips[5], 1.0f);
+                                finishedDelayTasks.Add(id);
                                 break;
                         }
-
-                        finishedDelayTasks.Add(id);
                     }
                 }
             }
@@ -311,12 +322,6 @@ namespace PlayerControl{
 
             else if(interactableObject.CompareTag("FacilitiesIT")){
                 levelManager.OpenUpgrades(1);
-            }
-
-            else if(interactableObject.CompareTag("Laptop") && levelManager.taskIds.Contains(3)){
-                statusText.text = "Laptop restarted.";
-                audioSource.PlayOneShot(interactionClips[9], 1.0f);
-                officeCredit += 2;
             }
 
             else if(interactableObject.CompareTag("PaperStack") && levelManager.taskIds.Contains(10)){
@@ -407,6 +412,31 @@ namespace PlayerControl{
                 inProgressTasks.Remove(0);
                 finishedDelayTasks.Remove(0);
                 officeCredit += 5;
+            }
+
+            else if(!inProgressTasks.Contains(3) && interactableObject.CompareTag("Laptop") /*&& levelManager.taskIds.Contains(3)*/){
+                statusText.text = "Laptop restarted.";
+                audioSource.PlayOneShot(interactionClips[9], 1.0f);
+                DelayedTask task = new DelayedTask(3, 5.0f);
+                inProgressTasks.Add(3);
+                delayedTasks.Add(task);
+            }
+
+            else if(finishedDelayTasks.Contains(3) && interactableObject.CompareTag("Laptop") /*&& levelManager.taskIds.Contains(3)*/){
+                statusText.text = "Laptop started.";
+                audioSource.PlayOneShot(interactionClips[10], 1.0f);
+                levelManager.taskIds.Remove(3);
+                inProgressTasks.Remove(3);
+                finishedDelayTasks.Remove(3);
+                officeCredit += 2;
+            }
+
+            else if(!inProgressTasks.Contains(8) && interactableObject.CompareTag("TemporalRift") && levelManager.taskIds.Contains(8)){
+                statusText.text = "Delegating rift task force...";
+                DelayedTask task = new DelayedTask(8, 10.0f);
+                inProgressTasks.Add(8);
+                delayedTasks.Add(task);
+                temporalRift = interactableObject;
             }
 
             // The related task is not active

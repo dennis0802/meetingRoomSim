@@ -139,6 +139,10 @@ namespace Levels{
         [SerializeField]
         private GameObject laptopScreen;
 
+        [Tooltip("Default laptop screen material")]
+        [SerializeField]
+        private Material defaultScreen;
+
         [Tooltip("Workers in the scene")]
         [SerializeField]
         private List<GameObject> workers;
@@ -213,6 +217,10 @@ namespace Levels{
                         GameLost = true;
                     }
 
+                    if(!taskIds.Contains(3)){
+                        laptopScreen.GetComponent<Renderer>().material = defaultScreen;
+                    }
+                    
                     taskActive = taskIds.Count > 0;
                     if(seconds > 0){
                         // Tasks
@@ -268,6 +276,9 @@ namespace Levels{
                                     worker = workers[selectedWorker].GetComponent<Worker>();
                                     worker.OnTask = false;
                                     taskArchive.taskDictionary[7] = task;
+                                    break;
+                                case 8:
+                                    SpawnTaskObject(taskObjects[3], taskObjectSpawnClips[5], 0.5f);
                                     break;
                                 case 9:
                                     break;
