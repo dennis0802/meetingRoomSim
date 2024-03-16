@@ -22,6 +22,12 @@ TagManager:
   - Laptop
   - TemporalRift
   - WaterCooler
+  - GossipWorker
+  - Gavel
+  - Pen
+  - Ninjas
+  - Paparazzi
+  - Mic
   layers:
   - Default
   - TransparentFX

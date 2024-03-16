@@ -124,16 +124,6 @@ namespace PlayerControl{
         private List<int> finishedDelayTasks, inProgressTasks;
 
         /// <summary>
-        /// The amount of office credit the player has
-        /// </summary>
-        public int officeCredit = 0;
-        
-        /// <summary>
-        /// Player speed
-        /// </summary>  
-        public float playerSpeed, basePlayerSpeed = 3.0f;
-
-        /// <summary>
         /// Player input object
         /// </summary> 
         private PlayerInput playerInput;
@@ -142,6 +132,21 @@ namespace PlayerControl{
         /// Temp variable for temporal rift
         /// </summary>
         private GameObject temporalRift;
+
+        /// <summary>
+        /// The amount of office credit the player has
+        /// </summary>
+        public int officeCredit = 0;
+
+        /// <summary>
+        /// Waiting time for tasks
+        /// </summary>
+        public float microwaveWait = 10.0f, coffeeWait = 12.0f;
+        
+        /// <summary>
+        /// Player speed
+        /// </summary>  
+        public float playerSpeed, basePlayerSpeed = 3.0f;
 
         // Start is called before the first frame update
         private void Start()
@@ -381,11 +386,58 @@ namespace PlayerControl{
                 officeCredit += 10;
             }
 
+            else if(interactableObject.CompareTag("GossipWorker") && levelManager.taskIds.Contains(20)){
+                string gossip = "";
+                int selected = Random.Range(0,10);
+                Worker worker = interactableObject.GetComponent<Worker>();
+
+                switch(selected){
+                    case 0:
+                        gossip = "Begrudgingly gossiped with ";
+                        break;
+                    case 1:
+                        gossip = "Spoke about management with ";
+                        break;
+                    case 2:
+                        gossip = "Spoke about past with ";
+                        break;
+                    case 3:
+                        gossip = "Discussed TV shows with ";
+                        break;
+                    case 4:
+                        gossip = "Got roasted by ";
+                        levelManager.taskIds.Add(16);
+                        break;
+                    case 5:
+                        gossip = "You roasted ";
+                        break;
+                    case 6:
+                        gossip = "Made a deal with ";
+                        officeCredit += 5;
+                        break;
+                    case 7:
+                        gossip = "Got robbed by ";
+                        officeCredit -= 20;
+                        officeCredit = officeCredit < 0 ? 0 : officeCredit;
+                        break;
+                    case 8:
+                        gossip = "Discussed future with ";
+                        break;
+                    case 9:
+                        gossip = "Awkward silence with ";
+                        break;
+                }
+
+                statusText.text = gossip + " " + worker.name;
+                levelManager.taskIds.Remove(20);
+                officeCredit += 10;
+            }
+
             // Start a delayed task only if it is not in progress yet.
             else if(!inProgressTasks.Contains(9) && interactableObject.CompareTag("Microwave") && levelManager.taskIds.Contains(9)){
-                statusText.text = "Heating for 15s...";
+                statusText.text = "Heating for " + microwaveWait.ToString() + "s...";
                 audioSource.PlayOneShot(interactionClips[4], 1.0f);
-                DelayedTask task = new DelayedTask(9, 5.0f);
+                DelayedTask task = new DelayedTask(9, microwaveWait);
                 inProgressTasks.Add(9);
                 delayedTasks.Add(task);
             }
@@ -401,7 +453,7 @@ namespace PlayerControl{
             else if(!inProgressTasks.Contains(0) && interactableObject.CompareTag("CoffeeMaker") && levelManager.taskIds.Contains(0)){
                 statusText.text = "Brewing coffee...";
                 audioSource.PlayOneShot(interactionClips[4], 1.0f);
-                DelayedTask task = new DelayedTask(0, 10.0f);
+                DelayedTask task = new DelayedTask(0, coffeeWait);
                 inProgressTasks.Add(0);
                 delayedTasks.Add(task);
             }
@@ -414,7 +466,7 @@ namespace PlayerControl{
                 officeCredit += 5;
             }
 
-            else if(!inProgressTasks.Contains(3) && interactableObject.CompareTag("Laptop") /*&& levelManager.taskIds.Contains(3)*/){
+            else if(!inProgressTasks.Contains(3) && interactableObject.CompareTag("Laptop") && levelManager.taskIds.Contains(3)){
                 statusText.text = "Laptop restarted.";
                 audioSource.PlayOneShot(interactionClips[9], 1.0f);
                 DelayedTask task = new DelayedTask(3, 5.0f);
@@ -422,7 +474,7 @@ namespace PlayerControl{
                 delayedTasks.Add(task);
             }
 
-            else if(finishedDelayTasks.Contains(3) && interactableObject.CompareTag("Laptop") /*&& levelManager.taskIds.Contains(3)*/){
+            else if(finishedDelayTasks.Contains(3) && interactableObject.CompareTag("Laptop") && levelManager.taskIds.Contains(3)){
                 statusText.text = "Laptop started.";
                 audioSource.PlayOneShot(interactionClips[10], 1.0f);
                 levelManager.taskIds.Remove(3);

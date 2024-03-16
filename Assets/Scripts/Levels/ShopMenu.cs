@@ -42,17 +42,19 @@ namespace Levels{
         private Player player;
 
         /// <summary>
+        /// Level manager
+        /// </summary>
+        [Tooltip("Level manager")]
+        [SerializeField]
+        private LevelManager levelManager;
+
+        /// <summary>
         /// The amount of times an upgrade has been purchased
         /// </summary>
         public List<int> UpgradesPurchased = new List<int>(){0, 0, 0, 0};
 
         void Start(){
-            if(gameObject.name.Equals("IT Upgrades")){
 
-            }
-            else if(gameObject.name.Equals("Personal Upgrades")){
-
-            }
         }
 
         void Update(){
@@ -88,6 +90,32 @@ namespace Levels{
                 switch(id){
                     case 0:
                         player.basePlayerSpeed += 1.0f;
+                        break;
+                    case 1:
+                        levelManager.regainBonus += 0.2f;
+                        break;
+                    case 2:
+                        levelManager.outOfRoomRate -= 0.25f;
+                        break;
+                    case 3:
+                        levelManager.IncrementMaxPatience();
+                        break;
+                }
+            }
+            else if(gameObject.name.Equals("IT Upgrades")){
+                switch(id){
+                    case 0:
+                        levelManager.minFailureThreshold += 0.25f;
+                        break;
+                    case 1:
+                        player.microwaveWait -= 2.0f;
+                        player.coffeeWait -= 2.0f;
+                        break;
+                    case 2:
+                        levelManager.patienceRate -= 0.25f;
+                        break;
+                    case 3:
+                        // Create intern here. They can perform relevant tasks that are closest to them. Otherwise they wander back to the meeting room
                         break;
                 }
             }

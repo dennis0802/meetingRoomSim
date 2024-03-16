@@ -33,12 +33,12 @@ namespace Levels{
             taskDictionary.Add(12, "Hang TVs back up"); // done with audio
             taskDictionary.Add(13, "Shoo party ninjas");
             taskDictionary.Add(14, "Inspect extinguisher"); // done with audio
-            taskDictionary.Add(15, "Stop a toxic joke");
+            taskDictionary.Add(15, "Preside over trial");
             taskDictionary.Add(16, "Treat a sick burn"); // done with audio
             taskDictionary.Add(17, "Catch Maya the dog");
             taskDictionary.Add(18, "Check fridge"); // done with audio
-            taskDictionary.Add(19, "Play MTG");
-            taskDictionary.Add(20, "Water cooler gossip");
+            taskDictionary.Add(19, "Take out the trash");
+            taskDictionary.Add(20, "Water cooler gossip"); // done
 
             Random rnd = new Random();
             int topicId = rnd.Next(0, 12);

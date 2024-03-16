@@ -185,6 +185,16 @@ namespace Levels{
         private bool setup, taskActive;
 
         /// <summary>
+        /// Rate of patience loss
+        /// </summary>
+        public float patienceRate = 1, outOfRoomRate = 1, regainBonus = 0;
+
+        /// <summary>
+        /// Threshold for equipment failure
+        /// </summary>
+        public float minFailureThreshold = 0.0f;
+
+        /// <summary>
         /// Static flags
         /// </summary>
         public static bool GameLost, GameWon, InUpgrades;
@@ -237,11 +247,16 @@ namespace Levels{
                         // Add tasks every interval provided the list isn't full
                         if(timer >= taskInterval && taskIds.Count < 12){
                             int generated;
+                            float threshold;
                             // Ensure duplicate of an active task does not get generated
                             while(true){
                                 generated = taskArchive.GenerateTask();
-
-                                if(!taskIds.Contains(generated)){
+                                threshold = Random.Range(0.0f, 1.0f);
+                                
+                                if((generated == 3 || generated == 11 || generated == 12) && !taskIds.Contains(generated) && threshold >= minFailureThreshold){
+                                    break;
+                                }
+                                else if(!taskIds.Contains(generated)){
                                     break;
                                 }
                             }
@@ -315,14 +330,14 @@ namespace Levels{
 
                         // Increment patience if task is active or player is outside the room
                         if(!taskActive && player.transform.position.x <= 0f){
-                            patienceSlider.value -= Time.deltaTime*3;
+                            patienceSlider.value -= Time.deltaTime * patienceRate * 2 + Time.deltaTime * outOfRoomRate + Time.deltaTime * regainBonus;
                         }
                         else{
                             if(taskActive){
-                                patienceSlider.value += Time.deltaTime*2;
+                                patienceSlider.value += Time.deltaTime * patienceRate * 2;
                             }
                             if(player.transform.position.x > 0f){
-                                patienceSlider.value += Time.deltaTime;
+                                patienceSlider.value += Time.deltaTime * outOfRoomRate;
                             }
                         }
                     }
@@ -435,6 +450,13 @@ namespace Levels{
             audioSource.PlayOneShot(taskObjectSpawnClips[1], 1.0f);
             InUpgrades = false;
             Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        /// <summary>
+        /// Increment the maximum patience
+        /// </summary>
+        public void IncrementMaxPatience(){
+            patienceSlider.maxValue += 50f;
         }
     }
 }

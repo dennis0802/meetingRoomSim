@@ -99,16 +99,15 @@ namespace Levels{
         void Update(){
             // If on task, face forward, otherwise rotate in place.
             if(gameObject.CompareTag("Worker")){
-                    if(!OnTask){
-                        transform.Rotate(0,180*Time.deltaTime,0);
-                    }
-                    else{
-                        Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
-                        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
-                    }
+                if(!OnTask){
+                    transform.Rotate(0,180*Time.deltaTime,0);
+                }
+                else{
+                    Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+                }
             }
         }
-
 
         /// <summary>
         /// Set the worker's hair length
