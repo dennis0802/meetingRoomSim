@@ -23,3 +23,8 @@ Uses the Unity Game Engine with C# scripting and a MongoDB database
 * Cash Register Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=87313">Pixabay</a>
 * Machine Shutdown Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=87410">Pixabay</a>
 * Computer Shutdown Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=101297">Pixabay</a>
+* Gavel Sound Effect by <a href="https://pixabay.com/users/fablecityradio-29717525/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=124029">Martha Whitehouse</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=124029">Pixabay</a>
+* Mic Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41022">Pixabay</a>
+* Charlie Brown Style Teacher Sound Effect from <a href="https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=106753">Pixabay</a>
+* Trash Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41919">Pixabay</a>
+* Dog Barking Sound Effect from <a href="https://pixabay.com/sound-effects/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=102658">Pixabay</a>

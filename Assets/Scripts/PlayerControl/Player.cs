@@ -259,9 +259,10 @@ namespace PlayerControl{
         void FixedUpdate(){
             RaycastHit hit;
             bool raycast = Physics.Raycast(cameraTransform.position, cameraTransform.TransformDirection(Vector3.forward), out hit, 3, 1<<8);
-            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") || hit.collider.gameObject.CompareTag("FacilitiesIT") 
+            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") || hit.collider.gameObject.CompareTag("FacilitiesIT") || hit.collider.gameObject.CompareTag("GossipWorker")
                                          ? hit.collider.gameObject.transform.parent.gameObject : hit.collider.gameObject : null;
-            objectNameText.text = raycast ? hit.collider.gameObject.CompareTag("FacilitiesIT") ? interactableObject.name + " (IT)": interactableObject.name : "";
+            objectNameText.text = raycast ? hit.collider.gameObject.CompareTag("FacilitiesIT") ? interactableObject.name + " (IT)" : 
+                                            hit.collider.gameObject.CompareTag("GossipWorker") ? interactableObject.name + " (Pest)": interactableObject.name : "";
             canInteract = raycast;
             playerPointer.color = raycast ? Color.green : Color.white;
         }
@@ -329,9 +330,38 @@ namespace PlayerControl{
                 levelManager.OpenUpgrades(1);
             }
 
+            else if(interactableObject.CompareTag("Pen") && levelManager.taskIds.Contains(5)){
+                statusText.text = "Statements on controversy made.";
+                audioSource.PlayOneShot(interactionClips[2], 0.5f);
+                levelManager.taskIds.Remove(5);
+                officeCredit += 2;
+            }
+
             else if(interactableObject.CompareTag("PaperStack") && levelManager.taskIds.Contains(10)){
                 statusText.text = "Paperwork prepared.";
                 DespawnTaskObject(interactableObject, 2, 0.5f, 10);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("Mic") && levelManager.taskIds.Contains(1)){
+                statusText.text = "Gave stunning input.";
+                audioSource.PlayOneShot(interactionClips[12], 1.0f);
+                levelManager.taskIds.Remove(1);
+                officeCredit += 2;
+            }
+
+            else if(interactableObject.CompareTag("Gavel") && levelManager.taskIds.Contains(15)){
+                int selected = Random.Range(0, 2);
+                statusText.text = selected == 0 ? "The meeting was not guilty of internal theft." : "The meeting was guilty of internal theft.";
+                audioSource.PlayOneShot(interactionClips[15], 1.0f);
+                levelManager.taskIds.Remove(15);
+                officeCredit += 10;
+            }
+
+            else if(interactableObject.CompareTag("Garbage") && levelManager.taskIds.Contains(19)){
+                statusText.text = "Took out the trash.";
+                audioSource.PlayOneShot(interactionClips[14], 1.0f);
+                levelManager.taskIds.Remove(19);
                 officeCredit += 2;
             }
 
@@ -374,6 +404,7 @@ namespace PlayerControl{
                 statusText.text = interactableObject.name + " disciplined.";
                 Worker worker = interactableObject.GetComponent<Worker>();
                 worker.OnTask = true;
+                audioSource.PlayOneShot(interactionClips[13], 1.0f);
                 levelManager.taskIds.Remove(7);
                 officeCredit += 10;
             }
@@ -428,6 +459,7 @@ namespace PlayerControl{
                         break;
                 }
 
+                audioSource.PlayOneShot(interactionClips[13], 1.0f);
                 statusText.text = gossip + " " + worker.name;
                 levelManager.taskIds.Remove(20);
                 officeCredit += 10;

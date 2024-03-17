@@ -19,13 +19,13 @@ namespace Levels{
         /// </summary>
         public Task(){
             taskDictionary.Add(0, "Brew coffee"); // Done with audio
-            taskDictionary.Add(1, "Talk in meeting"); 
+            taskDictionary.Add(1, "Talk in meeting"); // Done with audio
             taskDictionary.Add(2, "Get food at entry"); // Done with audio
             taskDictionary.Add(3, "Fix laptop"); // done with audio
             taskDictionary.Add(4, "Get device in hall"); // done with audio
-            taskDictionary.Add(5, "Create statements");
+            taskDictionary.Add(5, "Create statements"); // done with audio
             taskDictionary.Add(6, "Shoo paparazzi");
-            taskDictionary.Add(7, "Get worker on task"); // Done
+            taskDictionary.Add(7, "Get worker on task"); // Done with audio
             taskDictionary.Add(8, "Shoo a temporal rift"); // done with audio
             taskDictionary.Add(9, "Heat up food"); // done with audio
             taskDictionary.Add(10, "Prepare paperwork"); // Done with audio
@@ -33,12 +33,12 @@ namespace Levels{
             taskDictionary.Add(12, "Hang TVs back up"); // done with audio
             taskDictionary.Add(13, "Shoo party ninjas");
             taskDictionary.Add(14, "Inspect extinguisher"); // done with audio
-            taskDictionary.Add(15, "Preside over trial");
+            taskDictionary.Add(15, "Preside over trial"); // done with audio
             taskDictionary.Add(16, "Treat a sick burn"); // done with audio
             taskDictionary.Add(17, "Catch Maya the dog");
             taskDictionary.Add(18, "Check fridge"); // done with audio
-            taskDictionary.Add(19, "Take out the trash");
-            taskDictionary.Add(20, "Water cooler gossip"); // done
+            taskDictionary.Add(19, "Take out the trash"); // done with audio
+            taskDictionary.Add(20, "Water cooler gossip"); // done with audio
 
             Random rnd = new Random();
             int topicId = rnd.Next(0, 12);
