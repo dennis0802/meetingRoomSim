@@ -259,7 +259,9 @@ namespace PlayerControl{
         void FixedUpdate(){
             RaycastHit hit;
             bool raycast = Physics.Raycast(cameraTransform.position, cameraTransform.TransformDirection(Vector3.forward), out hit, 3, 1<<8);
-            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") || hit.collider.gameObject.CompareTag("FacilitiesIT") || hit.collider.gameObject.CompareTag("GossipWorker")
+            interactableObject = raycast ? hit.collider.gameObject.CompareTag("Worker") || hit.collider.gameObject.CompareTag("FacilitiesIT") || 
+                                           hit.collider.gameObject.CompareTag("GossipWorker") || hit.collider.gameObject.CompareTag("Ninjas") ||
+                                           hit.collider.gameObject.CompareTag("Paparazzi") || hit.collider.gameObject.CompareTag("Maya")
                                          ? hit.collider.gameObject.transform.parent.gameObject : hit.collider.gameObject : null;
             objectNameText.text = raycast ? hit.collider.gameObject.CompareTag("FacilitiesIT") ? interactableObject.name + " (IT)" : 
                                             hit.collider.gameObject.CompareTag("GossipWorker") ? interactableObject.name + " (Pest)": interactableObject.name : "";
