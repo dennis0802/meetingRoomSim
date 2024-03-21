@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using Random=UnityEngine.Random;
 using Cinemachine;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using AI.States;
+using AI;
 
 namespace Levels{
     [DisallowMultipleComponent]
@@ -159,6 +163,16 @@ namespace Levels{
         [SerializeField]
         private List<Light> lights;
 
+        [Header("Agents")]
+        [Tooltip("The mind or global state agents are in.")]
+        [SerializeField]
+        private BaseState mind;
+
+        [Tooltip("The maximum number of agents that can be updated in a single frame.")]
+        [Min(0)]
+        [SerializeField]
+        private int maxAgentsPerUpdate;
+
         /// <summary>
         /// Office credit
         /// </summary>
@@ -183,16 +197,65 @@ namespace Levels{
         /// Flags
         /// </summary>
         private bool setup, taskActive;
+        
+        /// <summary>
+        /// Agent index
+        /// </summary>
+        private int _currentAgentIndex;
+
+        /// <summary>
+        /// Singleton manager
+        /// </summary>
+        protected static LevelManager Singleton;
+
+        /// <summary>
+        /// Mind reference
+        /// </summary>
+        public static BaseState Mind => Singleton.mind;
+
+        /// <summary>
+        /// Random position to move to
+        /// </summary>
+        public static Vector2 RandomPosition => Random.insideUnitCircle * 45;
+
+        /// <summary>
+        /// All agents
+        /// </summary>
+        public List<BaseAgent> Agents {get; private set;} = new();
+
+        /// <summary>
+        /// All states
+        /// </summary>
+        private static readonly Dictionary<Type, BaseState> RegisteredStates = new();
 
         /// <summary>
         /// Rate of patience loss
         /// </summary>
-        public float patienceRate = 1, outOfRoomRate = 1, regainBonus = 0;
+        [Header("Rates and Thresholds")]
+        [Tooltip("Rate of patience lost")]
+        [SerializeField]
+        private float patienceRate = 1;
+
+        /// <summary>
+        /// Rate of patience loss while out the room
+        /// </summary>
+        [Tooltip("Rate of patience lost while out the room")]
+        [SerializeField]
+        private float outOfRoomRate = 1;
+
+        /// <summary>
+        /// Patience regain rate
+        /// </summary>
+        [Tooltip("Patience regain rate")]
+        [SerializeField]
+        private float regainBonus = 0;
 
         /// <summary>
         /// Threshold for equipment failure
         /// </summary>
-        public float minFailureThreshold = 0.0f;
+        [Tooltip("Threshold for equipment failure")]
+        [SerializeField]
+        private float minFailureThreshold = 0.0f;
 
         /// <summary>
         /// Static flags
@@ -285,6 +348,9 @@ namespace Levels{
                                 case 4:
                                     SpawnTaskObject(taskObjects[2], taskObjectSpawnClips[2], 0.5f);
                                     break;
+                                case 6:
+                                    SpawnDestructibleObject(taskObjects[5], new Vector3(15.0f, 0f, -70f), taskObjectSpawnClips[6], 0.5f);
+                                    break;
                                 case 7:
                                     selectedWorker = Random.Range(0, workers.Count);
                                     task = "Get " + workers[selectedWorker].name + " on task";
@@ -308,11 +374,25 @@ namespace Levels{
                                     ToggleTVs(false);
                                     audioSource.PlayOneShot(taskObjectSpawnClips[3], 0.5f);
                                     break;
+                                case 13:
+                                    SpawnDestructibleObject(taskObjects[6], new Vector3(15.0f, 0f, -66f), taskObjectSpawnClips[7], 0.5f);
+                                    SpawnDestructibleObject(taskObjects[6], new Vector3(15.0f, 0f, -72f), taskObjectSpawnClips[7], 0.5f);
+                                    break;
                                 case 14:
+                                    break;
+                                case 15:
                                     break;
                                 case 16:
                                     break;
+                                case 17:
+                                    SpawnDestructibleObject(taskObjects[4], new Vector3(15.0f, 0f, -73f), taskObjectSpawnClips[3], 0.5f);
+                                    SpawnDestructibleObject(taskObjects[4], new Vector3(15.0f, 0f, -66f), taskObjectSpawnClips[3], 0.5f);
+                                    break;
                                 case 18:
+                                    break;
+                                case 19:
+                                    break;
+                                case 20:
                                     break;
                                 default:
                                     break;
@@ -359,6 +439,35 @@ namespace Levels{
                         GameWon = true;
                     }
                 }
+
+                // AI actions
+                if(Time.timeScale != 0){
+                    if(maxAgentsPerUpdate <= 0){
+                        for(int i = 0; i < Agents.Count; i++){
+                            try{
+                                Agents[i].Perform();
+                            }
+                            catch(Exception e){
+                                Debug.LogError(e);
+                            }
+                        }
+                    }
+                    else{
+                        for(int i = 0; i < maxAgentsPerUpdate; i++){
+                            try{
+                                Agents[_currentAgentIndex].Perform();
+                            }
+                            catch(Exception e){
+                                Debug.LogError(e);
+                            }
+                            NextAgent();
+                        }
+                    }
+                }
+
+                foreach(BaseAgent agent in Agents){
+                    agent.IncreaseDeltaTime();
+                }
             }
         }
 
@@ -383,6 +492,17 @@ namespace Levels{
         /// <param name="volume">The volume of the audio clip</param>
         void SpawnTaskObject(GameObject target, AudioClip clip, float volume){
             target.SetActive(true);
+            audioSource.PlayOneShot(clip, volume);
+        }
+
+        /// <summary>
+        /// Spawn a task object that will be "destroyed" on completion
+        /// </summary>
+        /// <param name="target">The new task object</param>
+        /// <param name="clip">The audio clip to play</param>
+        /// <param name="volume">The volume of the audio clip</param>
+        void SpawnDestructibleObject(GameObject target, Vector3 pos, AudioClip clip, float volume){
+            Instantiate(target, pos, Quaternion.identity); 
             audioSource.PlayOneShot(clip, volume);
         }
 
@@ -457,6 +577,150 @@ namespace Levels{
         /// </summary>
         public void IncrementMaxPatience(){
             patienceSlider.maxValue += 50f;
+        }
+
+        /// <summary>
+        /// Get the patience rate
+        /// </summary>
+        /// <returns>The patience rate</returns>
+        public float GetPatienceRate(){
+            return this.patienceRate;
+        }
+
+        /// <summary>
+        /// Set the patience rate
+        /// </summary>
+        /// <param name="value">The new patience rate</param>
+        public void SetPatienceRate(float value){
+            this.patienceRate = value;
+        }
+
+        /// <summary>
+        /// Get the room patience rate
+        /// </summary>
+        /// <returns>The room patience rate</returns>
+        public float GetRoomPatienceRate(){
+            return this.outOfRoomRate;
+        }
+
+        /// <summary>
+        /// Set the room patience rate
+        /// </summary>
+        /// <param name="value">The new room patience rate</param>
+        public void SetRoomPatienceRate(float value){
+            this.outOfRoomRate = value;
+        }
+
+        /// <summary>
+        /// Get the regain rate
+        /// </summary>
+        /// <returns>The regain rate</returns>
+        public float GetRegainRate(){
+            return this.regainBonus;
+        }
+
+        /// <summary>
+        /// Set the regain rate
+        /// </summary>
+        /// <param name="value">The new regain patience rate</param>
+        public void SetRegainRate(float value){
+            this.regainBonus = value;
+        }
+
+        /// <summary>
+        /// Get the failure threshold
+        /// </summary>
+        /// <returns>The failure threshold</returns>
+        public float GetFailureThreshold(){
+            return this.minFailureThreshold;
+        }
+
+        /// <summary>
+        /// Set the failure threshold
+        /// </summary>
+        /// <param name="value">The new regain patience rate</param>
+        public void SetFailureThreshold(float value){
+            this.minFailureThreshold = value;
+        }
+
+        // ------------------------ STATES AND AI --------------------------------------------------------------
+        /// <summary>
+        /// Lookup a state type from the dictionary.
+        /// </summary>
+        /// <typeparam name="T">The type of state to register</typeparam>
+        /// <returns>The state of the requested type.</returns>
+        public static BaseState GetState<T>() where T : BaseState{
+            return RegisteredStates.ContainsKey(typeof(T)) ? RegisteredStates[typeof(T)] : CreateState<T>();
+        }
+
+        /// <summary>
+        /// Register a state type into the dictionary.
+        /// </summary>
+        /// <typeparam name="T">The type of state to register</typeparam>
+        /// <returns>The state of the requested type.</returns>
+        private static void RegisterState<T>(BaseState stateToAdd) where T : BaseState{
+            RegisteredStates[typeof(T)] = stateToAdd;
+        }
+
+        /// <summary>
+        /// Create a state type into the dictionary
+        /// </summary>
+        /// <typeparam name="T">The type of state to register</typeparam>
+        /// <returns>The state of the requested type.</returns>
+        private static BaseState CreateState<T>() where T : BaseState{
+            RegisterState<T>(ScriptableObject.CreateInstance(typeof(T)) as BaseState);
+            return RegisteredStates[typeof(T)];
+        }
+
+        /// <summary>
+        /// Add an agent from the list of agents
+        /// </summary>
+        /// <param name="agent">The agent to add</param>
+        public static void AddAgent(BaseAgent agent){
+            if(Singleton.Agents.Contains(agent)){
+                return;
+            }
+
+            Singleton.Agents.Add(agent);
+        }
+
+        /// <summary>
+        /// Remove an agent from the list of agents
+        /// </summary>
+        /// <param name="agent">The agent to remove</param>
+        public static void RemoveAgent(BaseAgent agent){
+            if(!Singleton.Agents.Contains(agent)){
+                return;
+            }
+
+            int index = Singleton.Agents.IndexOf(agent);
+            Singleton.Agents.Remove(agent);
+            if(Singleton._currentAgentIndex > index){
+                Singleton._currentAgentIndex--;
+            }
+            if(Singleton._currentAgentIndex < 0 || Singleton._currentAgentIndex >= Singleton.Agents.Count){
+                Singleton._currentAgentIndex = 0;
+            }
+        }
+
+        /// <summary>
+        /// Move to the next agent in context
+        /// </summary>
+        private void NextAgent(){
+            _currentAgentIndex++;
+            _currentAgentIndex = _currentAgentIndex >= Agents.Count ? 0 : _currentAgentIndex;
+        }
+
+        protected virtual void Awake(){
+            if(Singleton == this){
+                return;
+            }
+
+            if(Singleton != null){
+                Destroy(gameObject);
+                return;
+            }
+            Singleton = this;
         }
     }
 }

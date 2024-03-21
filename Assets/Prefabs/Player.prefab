@@ -744,10 +744,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPointer: {fileID: 0}
   levelManager: {fileID: 0}
+  personalShop: {fileID: 0}
+  facilitiesShop: {fileID: 0}
+  creditText: {fileID: 0}
   objectNameText: {fileID: 0}
+  statusText: {fileID: 0}
   interactableObject: {fileID: 0}
   interactionClips: []
-  playerSpeed: 3
+  footstepsSound: {fileID: 0}
+  officeCredit: 0
+  microwaveWait: 10
+  coffeeWait: 12
+  playerSpeed: 5
+  basePlayerSpeed: 5
 --- !u!114 &7330171752583157399
 MonoBehaviour:
   m_ObjectHideFlags: 0

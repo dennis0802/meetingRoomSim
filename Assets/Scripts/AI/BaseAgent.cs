@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using AI.Sensors;
 using System.Linq;
 using AI.States;
+using Levels;
 
 // Based off of coursework for Dr. Vasighizaker's COMP4770-2023W Artificial Intelligence for Games
 
@@ -56,9 +57,9 @@ namespace AI{
         protected virtual void Start(){
             Setup();
 
-            /*if(CombatManager.Mind != null){
-                CombatManager.Mind.Enter(this);
-            }*/
+            if(LevelManager.Mind != null){
+                LevelManager.Mind.Enter(this);
+            }
 
             if(State != null){
                 State.Enter(this);
@@ -69,9 +70,9 @@ namespace AI{
         /// Perform current state action
         /// </summary>
         public virtual void Perform(){
-            /*if(CombatManager.Mind != null){
-                CombatManager.Mind.Execute(this);
-            }*/
+            if(LevelManager.Mind != null){
+                LevelManager.Mind.Execute(this);
+            }
             
             if(State != null){
                 State.Execute(this);
@@ -107,7 +108,7 @@ namespace AI{
         /// Setup the agent
         /// </summary>
         public void Setup(){
-            //CombatManager.AddAgent(this);
+            LevelManager.AddAgent(this);
 
             // Find sensors
             List<BaseSensor> sensors = GetComponents<BaseSensor>().ToList();
@@ -124,7 +125,7 @@ namespace AI{
         /// </summary>
         /// <typeparam name="T">The state to put the agent in</typeparam>
         public void SetState<T>() where T : BaseState{
-            BaseState value = null;//CombatManager.GetState<T>();
+            BaseState value = LevelManager.GetState<T>();
 
             if(State = value){
                 return;

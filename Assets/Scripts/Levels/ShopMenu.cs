@@ -42,6 +42,13 @@ namespace Levels{
         private Player player;
 
         /// <summary>
+        /// Spawnable intern
+        /// </summary>
+        [Tooltip("Spawnable intern")]
+        [SerializeField]
+        private GameObject intern;
+
+        /// <summary>
         /// Level manager
         /// </summary>
         [Tooltip("Level manager")]
@@ -92,10 +99,10 @@ namespace Levels{
                         player.basePlayerSpeed += 1.0f;
                         break;
                     case 1:
-                        levelManager.regainBonus += 0.2f;
+                        levelManager.SetRegainRate(levelManager.GetRegainRate() + 0.2f);
                         break;
                     case 2:
-                        levelManager.outOfRoomRate -= 0.25f;
+                        levelManager.SetRoomPatienceRate(levelManager.GetRoomPatienceRate() - 0.25f);
                         break;
                     case 3:
                         levelManager.IncrementMaxPatience();
@@ -105,17 +112,17 @@ namespace Levels{
             else if(gameObject.name.Equals("IT Upgrades")){
                 switch(id){
                     case 0:
-                        levelManager.minFailureThreshold += 0.25f;
+                        levelManager.SetFailureThreshold(levelManager.GetFailureThreshold() + 0.25f);
                         break;
                     case 1:
                         player.microwaveWait -= 2.0f;
                         player.coffeeWait -= 2.0f;
                         break;
                     case 2:
-                        levelManager.patienceRate -= 0.25f;
+                        levelManager.SetPatienceRate(levelManager.GetPatienceRate() - 0.25f);
                         break;
                     case 3:
-                        // Create intern here. They can perform relevant tasks that are closest to them. Otherwise they wander back to the meeting room
+                        Instantiate(intern);
                         break;
                 }
             }

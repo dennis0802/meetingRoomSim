@@ -24,18 +24,18 @@ namespace Levels{
             taskDictionary.Add(3, "Fix laptop"); // done with audio
             taskDictionary.Add(4, "Get device in hall"); // done with audio
             taskDictionary.Add(5, "Create statements"); // done with audio
-            taskDictionary.Add(6, "Shoo paparazzi");
+            taskDictionary.Add(6, "Shoo paparazzi"); // done
             taskDictionary.Add(7, "Get worker on task"); // Done with audio
             taskDictionary.Add(8, "Shoo a temporal rift"); // done with audio
             taskDictionary.Add(9, "Heat up food"); // done with audio
             taskDictionary.Add(10, "Prepare paperwork"); // Done with audio
             taskDictionary.Add(11, "Turn on the lights"); // done with audio
             taskDictionary.Add(12, "Hang TVs back up"); // done with audio
-            taskDictionary.Add(13, "Shoo party ninjas");
+            taskDictionary.Add(13, "Shoo party ninjas"); // done
             taskDictionary.Add(14, "Inspect extinguisher"); // done with audio
             taskDictionary.Add(15, "Preside over trial"); // done with audio
             taskDictionary.Add(16, "Treat a sick burn"); // done with audio
-            taskDictionary.Add(17, "Catch Maya the dog");
+            taskDictionary.Add(17, "Catch Maya the dog"); // done with audio
             taskDictionary.Add(18, "Check fridge"); // done with audio
             taskDictionary.Add(19, "Take out the trash"); // done with audio
             taskDictionary.Add(20, "Water cooler gossip"); // done with audio

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Levels;
 using System.Linq;
+using AI;
 
 namespace PlayerControl{
     [DisallowMultipleComponent]
@@ -23,13 +24,6 @@ namespace PlayerControl{
         [Tooltip("Level manager")]
         [SerializeField]
         private LevelManager levelManager;
-
-        /// <summary>
-        /// Shop menus
-        /// </summary> 
-        [Tooltip("Shop menus")]
-        [SerializeField]
-        private ShopMenu personalShop, facilitiesShop;
 
         /// <summary>
         /// Text object to store the amount of office credit
@@ -72,6 +66,18 @@ namespace PlayerControl{
         [Tooltip("Audio source for footsteps")]
         [SerializeField]
         private AudioSource footstepsSound;
+
+        /// <summary>
+        /// Player velocity based on position
+        /// </summary>
+        [Tooltip("Player velocity based on position")]
+        [SerializeField]
+        public Vector3 playerPositionVelocity;
+
+        /// <summary>
+        /// Current position
+        /// </summary>
+        private Vector3 pos;
 
         /// <summary>
         /// Audio source
@@ -134,6 +140,11 @@ namespace PlayerControl{
         private GameObject temporalRift;
 
         /// <summary>
+        /// Counters for tasks
+        /// </summary>
+        public int ninjasCaught = 0, paparazziCaught = 0;
+
+        /// <summary>
         /// The amount of office credit the player has
         /// </summary>
         public int officeCredit = 0;
@@ -146,7 +157,7 @@ namespace PlayerControl{
         /// <summary>
         /// Player speed
         /// </summary>  
-        public float playerSpeed, basePlayerSpeed = 3.0f;
+        public float playerSpeed, basePlayerSpeed = 5.0f;
 
         // Start is called before the first frame update
         private void Start()
@@ -254,6 +265,9 @@ namespace PlayerControl{
             }
 
             creditText.text = "CREDITS: " + officeCredit.ToString();
+
+            playerPositionVelocity = (transform.position - pos) / Time.deltaTime;
+            pos = transform.position;
         }
 
         void FixedUpdate(){
@@ -267,6 +281,10 @@ namespace PlayerControl{
                                             hit.collider.gameObject.CompareTag("GossipWorker") ? interactableObject.name + " (Pest)": interactableObject.name : "";
             canInteract = raycast;
             playerPointer.color = raycast ? Color.green : Color.white;
+        }
+
+        void Awake(){
+            pos = transform.position;
         }
 
         /// <summary>
@@ -409,6 +427,40 @@ namespace PlayerControl{
                 audioSource.PlayOneShot(interactionClips[13], 1.0f);
                 levelManager.taskIds.Remove(7);
                 officeCredit += 10;
+            }
+
+            else if(interactableObject.CompareTag("Maya") && levelManager.taskIds.Contains(17)){
+                statusText.text = "Maya caught... for now.";
+                audioSource.PlayOneShot(interactionClips[16], 1.0f);
+                interactableObject.SetActive(false);
+                levelManager.Agents.Remove(interactableObject.GetComponent<Maya>());
+                Destroy(interactableObject);
+                levelManager.taskIds.Remove(17);
+                officeCredit += 10;
+            }
+
+            else if(interactableObject.CompareTag("Paparazzi") && levelManager.taskIds.Contains(6)){
+                statusText.text = "Directed paparazzi to comms dept.";
+                interactableObject.SetActive(false);
+                levelManager.Agents.Remove(interactableObject.GetComponent<Paparazzi>());
+                Destroy(interactableObject);
+                if(paparazziCaught == 2){
+                    levelManager.taskIds.Remove(6);
+                    officeCredit += 10;
+                    paparazziCaught = 0;
+                }
+            }
+
+            else if(interactableObject.CompareTag("Ninjas") && levelManager.taskIds.Contains(14)){
+                statusText.text = "Shooed the ninjas";
+                interactableObject.SetActive(false);
+                levelManager.Agents.Remove(interactableObject.GetComponent<PartyNinja>());
+                Destroy(interactableObject);
+                if(ninjasCaught == 2){
+                    levelManager.taskIds.Remove(14);
+                    officeCredit += 10;
+                    ninjasCaught = 0;
+                }
             }
 
             else if(interactableObject.CompareTag("TV") && levelManager.taskIds.Contains(12)){
