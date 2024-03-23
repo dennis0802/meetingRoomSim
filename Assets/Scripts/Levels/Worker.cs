@@ -103,7 +103,7 @@ namespace Levels{
                     transform.Rotate(0,180*Time.deltaTime,0);
                 }
                 else{
-                    Quaternion targetRotation = Quaternion.Euler(0, 0, 0);
+                    Quaternion targetRotation = Quaternion.Euler(0, 90, 0);
                     transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
                 }
             }
@@ -116,7 +116,7 @@ namespace Levels{
         void SetHairLength(bool randomize){
             for(int i = 1; i < WorkerHair.Count && WorkerGender == Gender.Female; i++){
                 if(i < WorkerHair.Count - 2){
-                    WorkerHair[i].transform.localPosition = new Vector3(WorkerHair[i].transform.localPosition.x, 0.75f, WorkerHair[i].transform.localPosition.z);
+                    WorkerHair[i].transform.localPosition = new Vector3(WorkerHair[i].transform.localPosition.x, 2.94f, WorkerHair[i].transform.localPosition.z);
                     WorkerHair[i].transform.localScale = new Vector3(1f, WorkerHair[i].transform.localScale.y, WorkerHair[i].transform.localScale.z);
                 }
                 else{
@@ -129,7 +129,7 @@ namespace Levels{
                 int hairLength = Random.Range(0,2);
                 for(int i = 1; i < WorkerHair.Count && hairLength == 1; i++){
                     if(i < WorkerHair.Count - 2){
-                        WorkerHair[i].transform.localPosition = new Vector3(WorkerHair[i].transform.localPosition.x, 0.75f, WorkerHair[i].transform.localPosition.z);
+                        WorkerHair[i].transform.localPosition = new Vector3(WorkerHair[i].transform.localPosition.x, 2.94f, WorkerHair[i].transform.localPosition.z);
                         WorkerHair[i].transform.localScale = new Vector3(1f, WorkerHair[i].transform.localScale.y, WorkerHair[i].transform.localScale.z);
                     }
                     else{

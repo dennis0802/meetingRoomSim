@@ -45,15 +45,12 @@ namespace AI.States{
 
                     // Run away from the player
                     if(nearestPlayerPn is not null){
-                        // Calculate the steering behaviour for evasion
-                        float playerSpeed = nearestPlayerPn.playerPositionVelocity.magnitude;
-                        float lookaheadTime = (nearestPlayerPn.transform.position - pn.transform.position).magnitude/(pn.GetSpeed() + playerSpeed);
-                        Vector3 playerVelocity = nearestPlayerPn.playerPositionVelocity;
+                        Vector3 interest = nearestPlayerPn.transform.position;
+                        float xComponent = interest.x - pn.transform.position.x < -10.0f ? interest.x - 8.0f : pn.transform.position.x > 10.0f ? interest.x + 8.0f : pn.transform.position.x;
+                        float zComponent = interest.z - pn.transform.position.z < -10.0f ? interest.z - 8.0f : pn.transform.position.z > 10.0f ? interest.z + 8.0f : pn.transform.position.z;
 
-                        Vector3 fleePosition = (pn.transform.position - (nearestPlayerPn.transform.position + playerVelocity) * pn.DeltaTime).normalized * pn.GetSpeed() 
-                                                - playerVelocity;
-
-                        pn.SetDestination(new Vector3(fleePosition.x, pn.transform.position.y, fleePosition.z));
+                        Vector3 target = new Vector3(xComponent, interest.y, zComponent);
+                        pn.SetDestination(target);
                     }
 
                     else if(pn.GetVelocity().magnitude < pn.minStopSpeed){
@@ -70,7 +67,12 @@ namespace AI.States{
 
                     // "Annoy" the player by chasing them
                     if(nearestPlayerP is not null){
-                        p.SetDestination(nearestPlayerP.transform.position);
+                        Vector3 interest = nearestPlayerP.transform.position;
+                        float xComponent = interest.x - p.transform.position.x < -10.0f ? interest.x + 2.0f : p.transform.position.x > 10.0f ? interest.x - 2.0f : p.transform.position.x;
+                        float zComponent = interest.z - p.transform.position.z < -10.0f ? interest.z + 2.0f : p.transform.position.z > 10.0f ? interest.z - 2.0f : p.transform.position.z;
+
+                        Vector3 target = new Vector3(xComponent, interest.y, zComponent);
+                        p.SetDestination(target);
                     }
 
                     else if(p.GetVelocity().magnitude < p.minStopSpeed){

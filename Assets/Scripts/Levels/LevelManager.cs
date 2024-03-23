@@ -350,6 +350,7 @@ namespace Levels{
                                     break;
                                 case 6:
                                     SpawnDestructibleObject(taskObjects[5], new Vector3(15.0f, 0f, -70f), taskObjectSpawnClips[6], 0.5f);
+                                    SpawnDestructibleObject(taskObjects[5], new Vector3(15.0f, 0f, -70f), taskObjectSpawnClips[6], 0.5f);
                                     break;
                                 case 7:
                                     selectedWorker = Random.Range(0, workers.Count);
@@ -386,7 +387,6 @@ namespace Levels{
                                     break;
                                 case 17:
                                     SpawnDestructibleObject(taskObjects[4], new Vector3(15.0f, 0f, -73f), taskObjectSpawnClips[3], 0.5f);
-                                    SpawnDestructibleObject(taskObjects[4], new Vector3(15.0f, 0f, -66f), taskObjectSpawnClips[3], 0.5f);
                                     break;
                                 case 18:
                                     break;
